@@ -1,0 +1,13 @@
+@import "bootstrap/scss/bootstrap";
+
+@import './bootstrap.scss';
+
+.custom-styles-wrapper {
+  .better-select__dropdown-list {
+    li a::before {
+      content: "o";
+      color: var(--color);
+      margin-right: 10px;
+    }
+  }
+}

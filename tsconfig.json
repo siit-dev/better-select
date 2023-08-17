@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "dom", "dom.iterable"],
+    "types": ["node"],
+    "skipLibCheck": true,
+    "outDir": "./dist/",
+
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowJs": true,
+
+    "typeRoots": ["./node_modules/@types", "./src/types"]
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"]
+}

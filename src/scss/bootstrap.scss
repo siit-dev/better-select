@@ -1,0 +1,160 @@
+/**
+ * Styles for integrating Better-Select with Bootstrap (taking into account Bootstrap's styles)
+ */
+
+
+better-select,
+.better-select {
+  display: block;
+  position: relative;
+
+  > .better-select {
+    width: 100%;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  &.open {
+    .better-select__trigger {
+      span {
+        &::after {
+          transform: rotate(90deg);
+          top: 11px;
+        }
+      }
+    }
+
+    .better-select__trigger::after {
+      transform: rotate(180deg);
+    }
+
+    .better-select__dropdown {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  // style the select even before Better-Select is initialized, for better UX and better CLS
+  .better-select__trigger {
+    @extend .form-select;
+  }
+
+  // Style the better select trigger with floating forms
+  .form-floating .better-select__trigger.has-selected {
+    padding: $form-floating-input-padding-t $input-padding-x
+      $form-floating-input-padding-b $input-padding-x;
+  }
+
+  .was-validated & {
+    select:invalid + .better-select__trigger {
+      border-color: $form-feedback-invalid-color;
+    }
+
+    select:valid + .better-select__trigger {
+      border-color: $form-feedback-valid-color;
+    }
+  }
+
+  .better-select__dropdown {
+    @extend .dropdown-menu;
+
+    position: absolute;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    border-top: none;
+    z-index: -1;
+
+    &.open {
+      display: block;
+    }
+
+    ul {
+      margin: 0;
+      padding: 0;
+      line-height: var(--bs-body-line-height);
+      max-height: 260px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin; /* Firefox */
+      scrollbar-color: var(--scrollbar-color) $gray-300;
+
+      --scrollbar-color: var(--dropdown-border-color, #{$dropdown-border-color});
+
+      &::-webkit-scrollbar {
+        /* WebKit */
+        width: 5px;
+        background-color: $gray-300;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: $dropdown-border-color;
+      }
+    }
+
+    li {
+      display: block;
+      padding-left: 0;
+      margin: 0;
+
+      a {
+        @extend .dropdown-item;
+      }
+
+      &.is-active {
+        font-weight: bold;
+      }
+
+      &.is-disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      &.is-active.is-temporary-selection {
+        a {
+          color: $dropdown-link-hover-color;
+          background-color: $dropdown-link-hover-bg;
+        }
+      }
+    }
+  }
+}
+
+better-select {
+  display: block;
+
+  &.form-floating {
+    .better-select {
+      @extend .form-control;
+
+      padding: 0;
+      border: 0;
+
+      &.has-selected + label {
+        opacity: $form-floating-label-opacity;
+        transform: $form-floating-label-transform;
+        transition: $form-floating-transition;
+        z-index: 100;
+
+        & > * {
+          font-weight: inherit;
+          color: inherit;
+        }
+      }
+
+      &:not(.has-selected) .better-select__trigger {
+        span {
+          opacity: 0;
+        }
+      }
+    }
+
+    .better-select__trigger {
+      height: 100%;
+      width: 100%;
+      padding: $form-floating-input-padding-t $input-padding-x
+        $form-floating-input-padding-b $input-padding-x;
+    }
+  }
+}

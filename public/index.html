@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Better Select Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+  <body>
+    <div class="container my-4">
+      <h1 class="mb-4">Better Select Demo</h1>
+      <fieldset class="wrapper my-4">
+        <h2 class="h4">Default</h2>
+        <div class="form-group">
+          <label class="form-label">Select label</label>
+          <better-select>
+            <select name="select" id="select1" class="form-control">
+              <option value="1">Option 1</option>
+              <option value="2">Option 2</option>
+              <option value="3">Option 3</option>
+              <option value="4">Option 4</option>
+              <option value="5">Option 5</option>
+            </select>
+          </better-select>
+        </div>
+      </fieldset>
+
+      <fieldset class="wrapper my-4">
+        <h2>With Label</h2>
+        <better-select placeholder="Select">
+          <select name="select" id="select2">
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+            <option value="3">Option 3</option>
+            <option value="4">Option 4</option>
+            <option value="5">Option 5</option>
+          </select>
+        </better-select>
+      </fieldset>
+
+      <fieldset class="wrapper my-4">
+        <h2>With Floating labels</h2>
+        <better-select class="form-floating">
+          <select name="select" id="select3">
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+            <option value="3">Option 3</option>
+            <option value="4">Option 4</option>
+            <option value="5">Option 5</option>
+          </select>
+          <label>Select With Floating label</label>
+        </better-select>
+      </fieldset>
+
+      <fieldset class="wrapper my-4 custom-styles-wrapper">
+        <h2>With custom styles</h2>
+        <better-select>
+          <select name="select" id="select4">
+            <option value="1" data-style="--color: red">Option 1</option>
+            <option value="2" data-style="--color: green">Option 2</option>
+            <option value="3" data-style="--color: blue">Option 3</option>
+            <option value="4" data-style="--color: yellow">Option 4</option>
+            <option value="5" data-style="--color: pink">Option 5</option>
+          </select>
+        </better-select>
+      </fieldset>
+
+      <fieldset class="wrapper my-4 bg-body-secondary p-4 rounded">
+        <h2 class="mb-4">Bootstrap elements for comparison</h2>
+        <div class="row">
+          <div class="col-md-6 col-lg-4">
+            <h2 class="h4">Default dropdown</h2>
+            <div class="dropdown">
+              <button
+                class="btn btn-secondary dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Dropdown button
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Action</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li><a class="dropdown-item" href="#">Something else here</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <h2 class="h4">Default select</h2>
+            <div class="form-group">
+              <label class="form-label">Select label</label>
+              <select name="select" id="select-default" class="form-select">
+                <option value="1">Option 1</option>
+                <option value="2">Option 2</option>
+                <option value="3">Option 3</option>
+                <option value="4">Option 4</option>
+                <option value="5">Option 5</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <h2 class="h4">Default floating select</h2>
+            <div class="form-group form-floating">
+              <select name="select" id="select-default" class="form-select">
+                <option value="1">Option 1</option>
+                <option value="2">Option 2</option>
+                <option value="3">Option 3</option>
+                <option value="4">Option 4</option>
+                <option value="5">Option 5</option>
+              </select>
+              <label class="form-label">Select label</label>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+  </body>
+</html>
