@@ -123,7 +123,8 @@ To use this:
 @import 'bootstrap/scss/bootstrap';
 
 // Initialize the styles for better-select, based on bootstrap.
-@import 'smartimpact-it/better-select/bootstrap-styles.scss';
+/* stylelint-disable-next-line scss/at-import-partial-extension */
+@import '@smartimpact-it/better-select/src/scss/bootstrap.scss';
 ```
 
 ## Acknowledgements
