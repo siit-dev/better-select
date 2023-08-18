@@ -51,3 +51,28 @@ it('parses the current active option', () => {
   expect(trigger.textContent).toBe(select.options[select.selectedIndex].textContent);
   expect(selectedOption.querySelector('a').dataset.value).toBe(select.options[select.selectedIndex].value);
 });
+
+it('parses data-style attributes', () => {
+  document.body.innerHTML = `
+    <select name="select" id="select1">
+      <option data-style="--color: red" value="1">Option 1</option>
+      <option data-style="--color: green" value="2">Option 2</option>
+      <option data-style="--color: blue" value="3" disabled>Option 3</option>
+      <option data-style="--color: white" value="4" selected>Option 4</option>
+      <option data-style="--color: yellow" value="5">Option 5</option>
+    </select>
+  `;
+
+  select = document.querySelector('#select1');
+  betterSelectInstance = new BetterSelect(select);
+  betterSelect = select.closest('.better-select');
+
+  const optionList = betterSelect.querySelector('.better-select__dropdown-list');
+  const options = optionList.querySelectorAll(':scope > li');
+  const nativeOptions = select.options;
+  for (let i = 0; i < options.length; i++) {
+    const option = options[i];
+    const nativeOption = nativeOptions[i];
+    expect(option.style.cssText).toContain(nativeOption.dataset.style);
+  }
+});

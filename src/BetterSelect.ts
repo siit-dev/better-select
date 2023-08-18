@@ -149,7 +149,7 @@ export default class BetterSelect {
       this.#title = this.placeholder;
     } else {
       const selectedOption = this.#element.options[this.#element.selectedIndex];
-      this.#title = selectedOption?.text || this.placeholder;
+      this.#title = selectedOption?.text && selectedOption?.text.length ? selectedOption.text : this.#value;
     }
   }
 
@@ -183,7 +183,7 @@ export default class BetterSelect {
     this.#wrapperEl.append(this.#triggerEl);
     this.#wrapperEl.append(this.#dropdownEl!);
     this.#wrapperEl.style.position = 'relative';
-    this.#originalStyle = this.#element.style.cssText;
+    this.#originalStyle = this.#originalStyle || this.#element.style.cssText;
     window.requestAnimationFrame(() => {
       this.#element.style.cssText += `; opacity: 0; position: absolute; left: 0; right: 0; top: 0; height: ${
         this.#triggerEl?.offsetHeight || 20
@@ -225,7 +225,7 @@ export default class BetterSelect {
         const element = document.createElement('a');
         element.href = '#';
         element.dataset.value = option.value;
-        element.innerHTML = option.text;
+        element.innerHTML = option.text.length ? option.text : option.value;
 
         const listElement = document.createElement('li');
         if (option.disabled) {
@@ -614,6 +614,10 @@ export default class BetterSelect {
       triggerClass: this.#triggerClass,
       dropdownClass: this.#dropdownClass,
     };
+  }
+
+  updateSettings(settings: Partial<BetterSelectSettings>) {
+    // TODO: update the settings
   }
 
   get wrapperEl() {

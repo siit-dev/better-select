@@ -173,6 +173,10 @@ export default class BetterSelectComponent extends HTMLElement {
         this.zIndex = newValue ? parseInt(newValue) : null;
         break;
     }
+
+    if (this.betterSelectInstance) {
+      this.betterSelectInstance.updateSettings(this.getSettings());
+    }
   }
 
   disconnectedCallback() {
