@@ -123,3 +123,7 @@ To use this:
 // Initialize the styles for better-select, based on bootstrap.
 @import 'smartimpact-it/better-select/bootstrap-styles.scss';
 ```
+
+## Acknowledgements
+
+The library is a continuation of the [Better Select library started by Bogdan Barbu](https://github.com/bogdanbeniaminb/better-select).
