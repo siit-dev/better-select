@@ -1,6 +1,6 @@
 'use strict';
 
-import './matchMedia.mock';
+import '../__mocks__/stubs.mock';
 
 it('initializes a better select instance using JS', () => {
   const BetterSelect = require('../src/index').default;

@@ -1,6 +1,6 @@
 'use strict';
 
-import './matchMedia.mock';
+import '../__mocks__/stubs.mock';
 
 import BetterSelect from '../src/index';
 let betterSelect, select, betterSelectInstance;
