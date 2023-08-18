@@ -53,16 +53,17 @@ registerWebComponent();
 
 The available options are:
 
-| Option              | Description                                             | Default value               |
-| ------------------- | ------------------------------------------------------- | --------------------------- |
-| no-skip-empty       | don't skip options with empty value                     | false                       |
-| placeholder         | text to display when no option is selected              | null                        |
-| no-native-on-mobile | display the original select "dropdown" when on mobile   | false                       |
-| mobile-breakpoint   | window width (px) under which to be considered "mobile" | 1024                        |
-| wrapper-class       | the class added to the wrapper element                  | 'better-select'             |
-| trigger-class       | the class added to the trigger element                  | 'better-select\_\_trigger'  |
-| dropdown-class      | the class added to the dropdown element                 | 'better-select\_\_dropdown' |
-| z-index             | the z-index to be set on the custom select wrapper      | decrementing from 100       |
+| Option              | Description                                                                         | Default value               |
+| ------------------- | ----------------------------------------------------------------------------------- | --------------------------- |
+| no-skip-empty       | don't skip options with empty value                                                 | false                       |
+| placeholder         | text to display when no option is selected                                          | null                        |
+| fixed-placeholder   | if active, the placeholder will always be displayed, even when options are selected | false                       |
+| no-native-on-mobile | display the original select "dropdown" when on mobile                               | false                       |
+| mobile-breakpoint   | window width (px) under which to be considered "mobile"                             | 1024                        |
+| wrapper-class       | the class added to the wrapper element                                              | 'better-select'             |
+| trigger-class       | the class added to the trigger element                                              | 'better-select\_\_trigger'  |
+| dropdown-class      | the class added to the dropdown element                                             | 'better-select\_\_dropdown' |
+| z-index             | the z-index to be set on the custom select wrapper                                  | decrementing from 100       |
 
 Example:
 
@@ -99,16 +100,17 @@ $('select.my-select').betterSelect({...});
 
 The available options for the BetterSelect class are:
 
-| Option           | Description                                             | Default value               |
-| ---------------- | ------------------------------------------------------- | --------------------------- |
-| skipEmpty        | don't display options with empty value                  | true                        |
-| placeholder      | text to display when no option is selected              | null                        |
-| nativeOnMobile   | display the original select "dropdown" when on mobile   | true                        |
-| mobileBreakpoint | window width (px) under which to be considered "mobile" | 1024                        |
-| wrapperClass     | the class added to the wrapper element                  | 'better-select'             |
-| triggerClass     | the class added to the trigger element                  | 'better-select\_\_trigger'  |
-| dropdownClass    | the class added to the dropdown element                 | 'better-select\_\_dropdown' |
-| zIndex           | the z-index to be set on the custom select wrapper      | decrementing from 100       |
+| Option           | Description                                                                       | Default value               |
+| ---------------- | --------------------------------------------------------------------------------- | --------------------------- |
+| skipEmpty        | don't display options with empty value                                            | true                        |
+| placeholder      | text to display when no option is selected                                        | null                        |
+| fixedPlaceholder | if true, the placeholder will always be displayed, even when options are selected | false                       |
+| nativeOnMobile   | display the original select "dropdown" when on mobile                             | true                        |
+| mobileBreakpoint | window width (px) under which to be considered "mobile"                           | 1024                        |
+| wrapperClass     | the class added to the wrapper element                                            | 'better-select'             |
+| triggerClass     | the class added to the trigger element                                            | 'better-select\_\_trigger'  |
+| dropdownClass    | the class added to the dropdown element                                           | 'better-select\_\_dropdown' |
+| zIndex           | the z-index to be set on the custom select wrapper                                | decrementing from 100       |
 
 ## Integration with Bootstrap
 
