@@ -23,7 +23,12 @@
     "./registerForJquery": {
       "import": "./dist/esm/registerForJquery.js"
     },
-    "./bootstrap-styles.scss": {
+    "./bootstrap.scss": {
+      "style": "./src/scss/bootstrap.scss",
+      "import": "./src/scss/bootstrap.scss",
+      "require": "./src/scss/bootstrap.scss"
+    },
+    "./bootstrap": {
       "style": "./src/scss/bootstrap.scss",
       "import": "./src/scss/bootstrap.scss",
       "require": "./src/scss/bootstrap.scss"
