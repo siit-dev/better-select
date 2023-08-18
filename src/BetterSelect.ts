@@ -225,7 +225,7 @@ export default class BetterSelect {
         const element = document.createElement('a');
         element.href = '#';
         element.dataset.value = option.value;
-        element.innerText = option.text;
+        element.innerHTML = option.text;
 
         const listElement = document.createElement('li');
         if (option.disabled) {

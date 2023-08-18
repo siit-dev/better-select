@@ -19,6 +19,8 @@ declare global {
 }
 
 export default BetterSelect;
+export { BetterSelect };
 export type { BetterSelectSettings, BetterSelectAnchorOption } from './BetterSelect';
+export { default as BetterSelectComponent } from './WebComponent';
 export { registerForJquery } from './registerForJquery';
 export { registerWebComponent } from './registerWebComponent';
