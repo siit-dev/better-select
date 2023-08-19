@@ -1,6 +1,7 @@
 'use strict';
 
 import '../__mocks__/stubs.mock';
+import { defaultBetterSelectSettings } from '../src/BetterSelect';
 
 it('initializes a better select instance using JS', () => {
   const BetterSelect = require('../src/index').default;
@@ -28,6 +29,35 @@ it('initializes a better select instance using JS', () => {
   expect(betterSelect.wrapperEl).toBe(select.parentElement);
 });
 
+it('accepts custom CSS classes', () => {
+  const BetterSelect = require('../src/index').default;
+
+  document.body.innerHTML = `
+    <select name="select" id="select1">
+      <option value="1">Option 1</option>
+      <option value="2">Option 2</option>
+      <option value="3">Option 3</option>
+      <option value="4">Option 4</option>
+      <option value="5">Option 5</option>
+    </select>
+  `;
+
+  const select = document.querySelector('#select1');
+  const betterSelect = new BetterSelect(select, {
+    wrapperClass: 'custom-wrapper-class',
+    dropdownClass: 'custom-dropdown-class',
+    triggerClass: 'custom-trigger-class',
+  });
+  expect(betterSelect).toBeInstanceOf(BetterSelect);
+  expect(select.dataset.betterSelectInit).toBe('true');
+  expect(select.parentElement.classList.contains('custom-wrapper-class')).toBe(true);
+
+  expect(betterSelect.select).toBe(select);
+  expect(betterSelect.element).toBe(select);
+  expect(betterSelect.dropdownEl).toBe(select.parentElement.querySelector('.custom-dropdown-class'));
+  expect(betterSelect.triggerEl).toBe(select.parentElement.querySelector('.custom-trigger-class'));
+});
+
 it("doesn't initialize with a non-select element", () => {
   const BetterSelect = require('../src/index').default;
 
@@ -43,6 +73,7 @@ it("doesn't initialize with a non-select element", () => {
 
   const selectOption = document.querySelector('#select1 option');
   expect(() => new BetterSelect(selectOption)).toThrowError('Wrong element');
+  expect(selectOption.dataset.betterSelectInit).toBeFalsy();
 });
 
 it("doesn't initialize twice", () => {
@@ -89,7 +120,7 @@ it('destroys a better select instance', () => {
   expect(document.querySelector('.better-select')).toBeFalsy();
 });
 
-it('dynamically adding new options to the select updates the better select instance', async () => {
+test('dynamically adding new options to the select updates the better select instance', async () => {
   const BetterSelect = require('../src/index').default;
 
   document.body.innerHTML = `
@@ -117,4 +148,37 @@ it('dynamically adding new options to the select updates the better select insta
 
   expect(betterSelect.querySelector('.better-select__dropdown-list').querySelectorAll('li').length).toBe(6);
   expect(betterSelect.querySelector('.better-select__dropdown-list a[data-value="6"]').textContent).toBe('Option 6');
+});
+
+it('allows using an existing wrapper', () => {
+  const BetterSelect = require('../src/index').default;
+
+  document.body.innerHTML = `
+    <div class="custom-wrapper">
+      <select name="select" id="select1" style="color: red">
+        <option value="1">Option 1</option>
+        <option value="2">Option 2</option>
+        <option value="3">Option 3</option>
+        <option value="4">Option 4</option>
+        <option value="5">Option 5</option>
+      </select>
+    </div>
+  `;
+
+  const select = document.querySelector('#select1');
+  const customWrapper = document.querySelector('.custom-wrapper');
+  expect(customWrapper).toBeInstanceOf(HTMLElement);
+  const instance = new BetterSelect(select, {
+    wrapperEl: customWrapper,
+  });
+  const defaultSettings = defaultBetterSelectSettings;
+  expect(select.dataset.betterSelectInit).toBeTruthy();
+  expect(instance.wrapperEl).toBe(customWrapper);
+  expect(select.parentElement).toBe(customWrapper);
+  expect(select.parentElement.classList.contains(defaultSettings.wrapperClass)).toBeTruthy();
+
+  // Destroy the instance and check that the wrapper is still there
+  instance.destroy();
+  expect(select.parentElement).toBe(customWrapper);
+  expect(select.parentElement.classList.contains(defaultSettings.wrapperClass)).toBeFalsy();
 });

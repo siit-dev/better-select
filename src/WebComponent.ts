@@ -1,4 +1,4 @@
-import BetterSelect, { BetterSelectSettings } from './BetterSelect';
+import BetterSelect, { BetterSelectSettings, defaultBetterSelectSettings } from './BetterSelect';
 
 export default class BetterSelectComponent extends HTMLElement {
   /**
@@ -34,19 +34,19 @@ export default class BetterSelectComponent extends HTMLElement {
    * The class name of the wrapper element.
    * Web component attribute: 'wrapper-class'
    */
-  wrapperClass: string = 'better-select';
+  wrapperClass: string | undefined = undefined;
 
   /**
    * The class name of the trigger element.
    * Web component attribute: 'trigger-class'
    */
-  triggerClass: string = 'better-select__trigger';
+  triggerClass: string | undefined = undefined;
 
   /**
    * The class name of the dropdown element.
    * Web component attribute: 'dropdown-class'
    */
-  dropdownClass: string = 'better-select__dropdown';
+  dropdownClass: string | undefined = undefined;
 
   /**
    * The z-index of the dropdown element.
@@ -144,30 +144,32 @@ export default class BetterSelectComponent extends HTMLElement {
   ): void {
     if (oldValue === newValue) return;
 
+    const defaultValues = defaultBetterSelectSettings;
+
     switch (name) {
       case 'no-skip-empty':
-        this.noSkipEmpty = newValue !== null;
+        this.noSkipEmpty = newValue !== null && newValue !== 'false';
         break;
       case 'placeholder':
-        this.placeholder = newValue || null;
+        this.placeholder = newValue ?? null;
         break;
       case 'fixed-placeholder':
-        this.fixedPlaceholder = newValue !== null;
+        this.fixedPlaceholder = newValue !== null && newValue !== 'false';
         break;
       case 'no-native-on-mobile':
-        this.noNativeOnMobile = newValue !== null;
+        this.noNativeOnMobile = newValue !== null && newValue !== 'false';
         break;
       case 'mobile-breakpoint':
         this.mobileBreakpoint = newValue ? parseInt(newValue) : 1024;
         break;
       case 'wrapper-class':
-        this.wrapperClass = newValue || 'better-select';
+        this.wrapperClass = newValue || defaultValues.wrapperClass;
         break;
       case 'trigger-class':
-        this.triggerClass = newValue || 'better-select__trigger';
+        this.triggerClass = newValue || defaultValues.triggerClass;
         break;
       case 'dropdown-class':
-        this.dropdownClass = newValue || 'better-select__dropdown';
+        this.dropdownClass = newValue || defaultValues.dropdownClass;
         break;
       case 'z-index':
         this.zIndex = newValue ? parseInt(newValue) : null;
@@ -175,7 +177,7 @@ export default class BetterSelectComponent extends HTMLElement {
     }
 
     if (this.betterSelectInstance) {
-      this.betterSelectInstance.updateSettings(this.getSettings());
+      this.betterSelectInstance.settings = this.getSettings();
     }
   }
 

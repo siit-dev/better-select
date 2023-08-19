@@ -28,6 +28,20 @@ export interface BetterSelectSettings {
   fixedPlaceholder?: boolean;
 }
 
+export const defaultBetterSelectSettings = {
+  skipEmpty: true,
+  placeholder: null,
+  nativeOnMobile: true,
+  mobileBreakpoint: 1024,
+  wrapperEl: null,
+  wrapperClass: 'better-select',
+  triggerClass: 'better-select__trigger',
+  dropdownClass: 'better-select__dropdown',
+  alwaysTriggerChange: false,
+  fixedPlaceholder: false,
+  zIndex: undefined,
+} satisfies BetterSelectSettings;
+
 export default class BetterSelect {
   #element: HTMLSelectElement;
   #wrapperEl: HTMLElement | null = null;
@@ -37,14 +51,14 @@ export default class BetterSelect {
   #dropdownListEl: HTMLUListElement | null = null;
   #preexistingWrapper: boolean = false;
 
-  #skipEmpty: boolean;
-  placeholder: string | null;
-  #nativeOnMobile: boolean;
-  #mobileBreakpoint: number;
+  #skipEmpty!: boolean;
+  placeholder!: string | null;
+  #nativeOnMobile!: boolean;
+  #mobileBreakpoint!: number;
 
-  #wrapperClass: string;
-  #triggerClass: string;
-  #dropdownClass: string;
+  #wrapperClass!: string;
+  #triggerClass!: string;
+  #dropdownClass!: string;
 
   #alwaysTriggerChange: boolean = false;
   #fixedPlaceholder: boolean = false;
@@ -58,7 +72,7 @@ export default class BetterSelect {
   #isMobile = false;
 
   static zIndex = 100;
-  #zIndex: number;
+  #zIndex!: number;
   #originalStyle: string | null = null;
 
   #selectedOption: BetterSelectAnchorOption | null = null;
@@ -71,32 +85,50 @@ export default class BetterSelect {
   /**
    * create the custom select
    */
-  constructor(
-    element: HTMLSelectElement | null,
-    {
-      skipEmpty = true,
-      placeholder = null,
-      nativeOnMobile = true,
-      mobileBreakpoint = 1024,
-      wrapperEl = null,
-      wrapperClass = 'better-select',
-      triggerClass = 'better-select__trigger',
-      dropdownClass = 'better-select__dropdown',
-      alwaysTriggerChange = false,
-      fixedPlaceholder = false,
-      zIndex = undefined,
-    }: BetterSelectSettings = {},
-  ) {
+  constructor(element: HTMLSelectElement | null, settings: BetterSelectSettings = {}) {
     // make sure we have a select as an original element
     if (!element || !(element instanceof HTMLSelectElement)) {
       throw new Error(`[BETTER SELECT] Wrong element given. Expected a select!`);
     }
 
     this.#element = element;
+    this.#loadSettings(settings);
+
+    if (element.dataset.betterSelectInit) {
+      return;
+    }
+
+    this.#element.dataset.betterSelectInit = 'true';
+    this.#element.betterSelectInstance = this;
+
+    this.#initialize();
+  }
+
+  #loadSettings(settings: BetterSelectSettings = {}) {
+    // Keep only the settings that are defined.
+    settings = Object.fromEntries(Object.entries(settings).filter(([, value]) => value !== undefined));
+
+    const {
+      skipEmpty,
+      placeholder,
+      nativeOnMobile,
+      mobileBreakpoint,
+      wrapperEl,
+      wrapperClass,
+      triggerClass,
+      dropdownClass,
+      alwaysTriggerChange,
+      fixedPlaceholder,
+      zIndex,
+    } = {
+      ...defaultBetterSelectSettings,
+      ...settings,
+    };
     this.#skipEmpty = skipEmpty;
     this.placeholder = placeholder;
     this.#zIndex = zIndex || (this.constructor as typeof BetterSelect).zIndex--;
     this.#fixedPlaceholder = fixedPlaceholder;
+    this.#alwaysTriggerChange = alwaysTriggerChange;
 
     this.#nativeOnMobile = nativeOnMobile;
     this.#mobileBreakpoint = mobileBreakpoint;
@@ -108,17 +140,6 @@ export default class BetterSelect {
       this.#wrapperEl = wrapperEl;
       this.#preexistingWrapper = true;
     }
-
-    if (element.dataset.betterSelectInit) {
-      return;
-    }
-
-    this.#element.dataset.betterSelectInit = 'true';
-    this.#element.betterSelectInstance = this;
-
-    this.#alwaysTriggerChange = alwaysTriggerChange;
-
-    this.#initialize();
   }
 
   // dispatch custom events
@@ -138,6 +159,8 @@ export default class BetterSelect {
     this.#getValues();
     this.#createUI();
     this.#addListeners();
+
+    this.#triggerEvent(`betterSelect.init`);
   }
 
   /**
@@ -174,7 +197,9 @@ export default class BetterSelect {
       const wrapperClass = this.#sanitizeClassName(`${this.#wrapperClass}-${this.#element.name}`);
       this.#wrapperEl.classList.add(wrapperClass);
     }
-    this.#element.insertAdjacentElement('beforebegin', this.#wrapperEl);
+    if (!this.#wrapperEl.contains(this.#element)) {
+      this.#element.insertAdjacentElement('beforebegin', this.#wrapperEl);
+    }
 
     // add elements inside the wrapperEl
     this.#createDropdown();
@@ -601,23 +626,33 @@ export default class BetterSelect {
     this.toggle(newStatus);
   }
 
-  get settings() {
+  get settings(): BetterSelectSettings {
     return {
-      element: this.#element,
       skipEmpty: this.#skipEmpty,
       placeholder: this.placeholder,
-      zIndex: this.#zIndex,
-
+      fixedPlaceholder: this.#fixedPlaceholder,
       nativeOnMobile: this.#nativeOnMobile,
       mobileBreakpoint: this.#mobileBreakpoint,
+      zIndex: this.#zIndex,
+
       wrapperClass: this.#wrapperClass,
       triggerClass: this.#triggerClass,
       dropdownClass: this.#dropdownClass,
+      alwaysTriggerChange: this.#alwaysTriggerChange,
     };
   }
 
+  set settings(settings: BetterSelectSettings) {
+    this.updateSettings(settings);
+  }
+
   updateSettings(settings: Partial<BetterSelectSettings>) {
-    // TODO: update the settings
+    const updatedSettings = {
+      ...this.settings,
+      ...settings,
+    };
+    this.#loadSettings(updatedSettings);
+    this.reInit();
   }
 
   get wrapperEl() {
