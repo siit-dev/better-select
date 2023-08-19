@@ -6,11 +6,10 @@ it('displays a console warning if jQuery is missing', () => {
   const { registerForJquery } = require('../src/index');
   expect(window.jQuery).toBeUndefined();
 
-  const previousConsoleWarn = console.warn;
-  console.warn = jest.fn();
+  const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
   registerForJquery();
-  expect(console.warn).toHaveBeenCalled();
-  console.warn = previousConsoleWarn;
+  expect(warn).toHaveBeenCalled();
+  warn.mockReset();
 });
 
 it('registers the jquery plugin if jQuery is present', () => {
@@ -25,7 +24,6 @@ it('registers the jquery plugin if jQuery is present', () => {
 it("initializes a better select instance using jQuery's plugin", () => {
   const { registerForJquery } = require('../src/index');
   window.jQuery = require('jquery');
-  console.log(window.jQuery);
   registerForJquery();
 
   document.body.innerHTML = `
@@ -37,7 +35,6 @@ it("initializes a better select instance using jQuery's plugin", () => {
 
   const $ = window.jQuery;
   expect($).toBeDefined();
-  console.log($);
   $(select).betterSelect();
   expect(select.dataset.betterSelectInit).toBe('true');
 });

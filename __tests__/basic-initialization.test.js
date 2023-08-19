@@ -182,3 +182,27 @@ it('allows using an existing wrapper', () => {
   expect(select.parentElement).toBe(customWrapper);
   expect(select.parentElement.classList.contains(defaultSettings.wrapperClass)).toBeFalsy();
 });
+
+it('uses the default settings if no settings are given', () => {
+  const BetterSelect = require('../src/index').default;
+
+  document.body.innerHTML = `
+    <select name="select" id="select1" style="color: red">
+      <option value="1">Option 1</option>
+      <option value="2">Option 2</option>
+    </select>
+  `;
+
+  const select = document.querySelector('#select1');
+  const instance = new BetterSelect(select);
+  expect(select.dataset.betterSelectInit).toBeTruthy();
+
+  const defaultSettings = defaultBetterSelectSettings;
+  delete defaultSettings.wrapperEl;
+  delete defaultSettings.zIndex;
+  const instanceSettings = instance.settings;
+  delete instanceSettings.wrapperEl;
+  delete instanceSettings.zIndex;
+
+  expect(instanceSettings).toEqual(defaultSettings);
+});

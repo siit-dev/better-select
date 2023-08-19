@@ -343,6 +343,8 @@ export default class BetterSelect {
    * destroy the custom select and put back the original element
    */
   destroy() {
+    this.#removeListeners();
+
     this.#element.style.cssText = this.#originalStyle || '';
     delete this.#element.betterSelectInstance;
     delete this.#element.dataset.betterSelectInit;
@@ -354,8 +356,6 @@ export default class BetterSelect {
       this.#wrapperEl.style.position = '';
       this.#wrapperEl.tabIndex = -1;
     }
-
-    this.#mutationObserver?.disconnect();
   }
 
   /**
@@ -392,6 +392,11 @@ export default class BetterSelect {
    * toggle the dropdown status
    */
   toggle(newStatus: boolean | null = null) {
+    // If the dropdown is open and we're on mobile, close it.
+    if (this.#isMobile) {
+      newStatus = false;
+    }
+
     if (newStatus === null) {
       newStatus = !this.#opened;
     }
@@ -401,7 +406,7 @@ export default class BetterSelect {
       this.#setCurrentOption(this.#options.find(option => option.originalOption.selected) || null);
     }
 
-    if (this.#triggerEvent(`betterSelect.${newStatus ? 'open' : 'close'}`)) {
+    if (this.#isMobile || this.#triggerEvent(`betterSelect.${newStatus ? 'open' : 'close'}`)) {
       this.#wrapperEl?.parentElement?.classList.toggle('has-open-better-select', newStatus);
       this.#wrapperEl?.classList.toggle('open', newStatus);
       this.#dropdownEl?.classList.toggle('open', newStatus);
@@ -424,65 +429,20 @@ export default class BetterSelect {
    */
   #addListeners() {
     // listen to the changes to the original select
-    ['change', 'selectActive'].forEach(type =>
-      this.#element.addEventListener(type, e => {
-        this.updateUI();
-      }),
-    );
+    ['change', 'selectActive'].forEach(type => this.#element.addEventListener(type, this.updateUI.bind(this)));
 
     // open the dropdown on click on the trigger
-    this.#triggerEl?.addEventListener('click', e => {
-      e.preventDefault();
-      this.toggle();
-    });
+    this.#triggerEl?.addEventListener('click', this.#onTriggerClick.bind(this));
 
     // close the dropdown when clicking outside the custom select
-    document.body.addEventListener('click', e => {
-      if (this.#opened && !this.#wrapperEl?.contains(e.target as HTMLElement)) {
-        this.close();
-      }
-    });
+    document.body.addEventListener('click', this.#onOutsideClick.bind(this));
 
     // listen to clicks on dropdown options
-    this.#wrapperEl?.addEventListener('click', e => {
-      if (!this.#dropdownEl?.contains(e.target as HTMLElement)) {
-        return;
-      }
-
-      const item = (e.target as HTMLElement).closest('a');
-      if (this.#dropdownEl.contains(item)) {
-        e.preventDefault();
-
-        const selected = this.#options.find(({ element }) => element == item);
-        if (selected?.disabled) {
-          return;
-        }
-
-        let shouldUpdate = true;
-        if (!this.#alwaysTriggerChange) {
-          if (selected && selected.value == this.#element.value) {
-            shouldUpdate = false;
-          } else if (!selected && !this.#element.value) {
-            shouldUpdate = false;
-          }
-        }
-
-        if (shouldUpdate) {
-          this.#element.value = selected?.value || '';
-          this.#element.dispatchEvent(new CustomEvent('change', { bubbles: true }));
-        }
-        this.close();
-      }
-    });
+    this.#wrapperEl?.addEventListener('click', this.#onWrapperClick.bind(this));
 
     // listen to media queries, to allow "native on mobile"
     if (this.#nativeOnMobile) {
-      this.mobileMediaQuery?.addListener(() => {
-        this.#triggerEvent(`betterSelect.mobileBreakpoint`, {
-          isMobile: this.mobileMediaQuery?.matches,
-        });
-        this.#checkIfMobile();
-      });
+      this.mobileMediaQuery?.addListener(this.#onMobileMediaQueryChange.bind(this));
     }
 
     // Listen to keyboard.
@@ -493,6 +453,71 @@ export default class BetterSelect {
       this.refreshOptions();
     });
     this.#mutationObserver.observe(this.#element, { childList: true });
+  }
+
+  #removeListeners() {
+    ['change', 'selectActive'].forEach(type => this.#element.removeEventListener(type, this.updateUI.bind(this)));
+
+    this.#triggerEl?.removeEventListener('click', this.#onTriggerClick.bind(this));
+    document.body.removeEventListener('click', this.#onOutsideClick.bind(this));
+    this.#wrapperEl?.removeEventListener('click', this.#onWrapperClick.bind(this));
+
+    if (this.#nativeOnMobile) {
+      this.mobileMediaQuery?.removeListener(this.#onMobileMediaQueryChange.bind(this));
+    }
+
+    window.removeEventListener('keydown', this.#onKeyDown.bind(this));
+    this.#mutationObserver?.disconnect();
+    this.#mutationObserver = null;
+  }
+
+  #onTriggerClick(e: MouseEvent) {
+    e.preventDefault();
+    this.toggle();
+  }
+
+  #onWrapperClick(e: MouseEvent) {
+    if (!this.#dropdownEl?.contains(e.target as HTMLElement)) {
+      return;
+    }
+
+    const item = (e.target as HTMLElement).closest('a');
+    if (this.#dropdownEl.contains(item)) {
+      e.preventDefault();
+
+      const selected = this.#options.find(({ element }) => element == item);
+      if (selected?.disabled) {
+        return;
+      }
+
+      let shouldUpdate = true;
+      if (!this.#alwaysTriggerChange) {
+        if (selected && selected.value == this.#element.value) {
+          shouldUpdate = false;
+        } else if (!selected && !this.#element.value) {
+          shouldUpdate = false;
+        }
+      }
+
+      if (shouldUpdate) {
+        this.#element.value = selected?.value || '';
+        this.#element.dispatchEvent(new CustomEvent('change', { bubbles: true }));
+      }
+      this.close();
+    }
+  }
+
+  #onOutsideClick(e: MouseEvent) {
+    if (this.#opened && !this.#wrapperEl?.contains(e.target as HTMLElement)) {
+      this.close();
+    }
+  }
+
+  #onMobileMediaQueryChange() {
+    this.#triggerEvent(`betterSelect.mobileBreakpoint`, {
+      isMobile: this.mobileMediaQuery?.matches,
+    });
+    this.#checkIfMobile();
   }
 
   #onKeyDown(e: KeyboardEvent) {
@@ -594,6 +619,11 @@ export default class BetterSelect {
   #persistCurrentSelection = () => {
     const current = this.#selectedOption;
     if (current && this.#element.value !== current.value) {
+      // Don't select disabled options.
+      if (current.disabled) {
+        return;
+      }
+
       this.#element.value = current.value;
       this.#element.dispatchEvent(new CustomEvent('change', { bubbles: true }));
       this.updateUI();

@@ -67,19 +67,10 @@ export default class BetterSelectComponent extends HTMLElement {
   betterSelectInstance: BetterSelect | null = null;
 
   /**
-   * The connected state.
-   */
-  _connected: boolean = false;
-
-  /**
    * initialize better select when it's inserted ("connected") into the DOM
    */
   connectedCallback(): void {
-    // don't initialize twice, if the component is moved in the DOM into another DOM element
-    if (!this._connected) {
-      this._connected = true;
-      this._init();
-    }
+    this._init();
   }
 
   update() {

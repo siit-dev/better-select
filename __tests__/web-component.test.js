@@ -167,3 +167,67 @@ it('updates the better select instance if attributes change', () => {
   betterSelect.setAttribute('wrapper-class', 'test-class');
   expect(initCount).toBe(1);
 });
+
+test('dynamically adding a new web component element initializes it', () => {
+  document.body.innerHTML = `
+    <better-select>
+      <select name="select" id="select1">
+        <option value="1">Option 1</option>
+        <option value="2">Option 2</option>
+        <option value="3">Option 3</option>
+        <option value="4">Option 4</option>
+        <option value="5">Option 5</option>
+      </select>
+    </better-select>
+  `;
+
+  const betterSelect = document.querySelector('better-select');
+  expect(betterSelect).toBeInstanceOf(BetterSelectComponent);
+  expect(betterSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+
+  const newSelect = document.createElement('better-select');
+  newSelect.innerHTML = `
+    <select name="select" id="select2">
+      <option value="1">Option 1</option>
+    </select>
+  `;
+  document.body.appendChild(newSelect);
+
+  expect(newSelect).toBeInstanceOf(BetterSelectComponent);
+  expect(newSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+});
+
+test('moving a web component element reinitializes it', () => {
+  document.body.innerHTML = `
+    <better-select>
+      <select name="select" id="select1">
+        <option value="1">Option 1</option>
+        <option value="2">Option 2</option>
+        <option value="3">Option 3</option>
+        <option value="4">Option 4</option>
+        <option value="5">Option 5</option>
+      </select>
+    </better-select>
+  `;
+
+  const betterSelect = document.querySelector('better-select');
+  expect(betterSelect).toBeInstanceOf(BetterSelectComponent);
+  expect(betterSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+  const firstInstance = betterSelect.betterSelect;
+
+  // Create, append, and move the element.
+  const newDiv = document.createElement('div');
+  document.body.appendChild(newDiv);
+  newDiv.appendChild(betterSelect);
+  const secondInstance = betterSelect.betterSelect;
+  expect(secondInstance).not.toBe(firstInstance);
+  expect(betterSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+
+  // Create, move and append the element.
+  const thirdDiv = document.createElement('div');
+  thirdDiv.appendChild(betterSelect);
+  document.body.appendChild(thirdDiv);
+  const thirdInstance = betterSelect.betterSelect;
+  expect(thirdInstance).not.toBe(firstInstance);
+  expect(betterSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+});
