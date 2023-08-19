@@ -1,0 +1,33 @@
+name: Update Coverage in README
+on:
+  push:
+    branches:
+      - main
+jobs:
+  update-coverage-in-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+
+      - name: Jest Coverage Comment
+        if: github.ref == 'refs/heads/main'
+        id: coverageComment
+        uses: MishaKav/jest-coverage-comment@main
+        with:
+          hide-summary: true
+          coverage-summary-path: ./coverage/coverage-summary.json
+
+      - name: Update README with Coverage HTML
+        if: github.ref == 'refs/heads/main'
+        run: |
+          sed -i '/<!-- Jest Coverage Comment:Begin -->/,/<!-- Jest Coverage Comment:End -->/c\<!-- Jest Coverage Comment:Begin -->\n\${{ steps.coverageComment.outputs.summaryHtml }}\n<!-- Jest Coverage Comment:End -->' ./README.md
+
+      - name: Commit & Push changes in README
+        if: github.ref == 'refs/heads/main'
+        uses: actions-js/push@master
+        with:
+          message: Update coverage in README
+          github_token: ${{ secrets.GITHUB_TOKEN }}
