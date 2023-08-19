@@ -1,7 +1,7 @@
 # Better Select
 
 <!-- Jest Coverage Comment:Begin -->
-<!-- Jest Coverage Comment:End -->
+\n<!-- Jest Coverage Comment:End -->
 
 Better Select is a minimal custom select, with the option to fallback to the native select on mobile devices. It offers:
 
