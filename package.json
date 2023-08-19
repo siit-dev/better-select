@@ -54,6 +54,7 @@
     "build:types": "node tools/cleanup types && copyfiles -u 1 \"src/**/*.d.ts\" dist/types && tsc -p config/tsconfig.types.json",
     "test": "jest --config jestconfig.json --passWithNoTests",
     "test:coverage": "jest --config jestconfig.json --coverage",
+    "test:coverage:ci": "jest --config jestconfig.json --coverage --coverageReporters=\"json-summary\" --coverageDirectory=\"./coverage\"",
     "format": "prettier --write \"src/**/*.ts\" \"**/*.md\"",
     "format:check": "prettier --list-different \"src/**/**.{js,ts}\" \"**/*.md\"",
     "pretest-disabled": "npm run build",
