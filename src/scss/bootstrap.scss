@@ -2,7 +2,6 @@
  * Styles for integrating Better-Select with Bootstrap (taking into account Bootstrap's styles)
  */
 
-
 better-select,
 .better-select {
   display: block;
@@ -43,16 +42,18 @@ better-select,
 
   // Style the better select trigger with floating forms
   .form-floating .better-select__trigger.has-selected {
-    padding: $form-floating-input-padding-t $input-padding-x
-      $form-floating-input-padding-b $input-padding-x;
+    padding: $form-floating-input-padding-t $input-padding-x $form-floating-input-padding-b
+      $input-padding-x;
   }
 
   .was-validated & {
-    select:invalid + .better-select__trigger {
+    select:invalid + .better-select__trigger,
+    &:invalid .better-select__trigger {
       border-color: $form-feedback-invalid-color;
     }
 
-    select:valid + .better-select__trigger {
+    select:valid + .better-select__trigger,
+    &:valid .better-select__trigger {
       border-color: $form-feedback-valid-color;
     }
   }
@@ -131,16 +132,24 @@ better-select {
       padding: 0;
       border: 0;
 
+      & + label {
+        transition: $form-floating-transition;
+        z-index: 100;
+      }
+
       &.has-selected + label {
         opacity: $form-floating-label-opacity;
         transform: $form-floating-label-transform;
-        transition: $form-floating-transition;
-        z-index: 100;
 
         & > * {
           font-weight: inherit;
           color: inherit;
         }
+      }
+
+      // Prevent the label from animating when the select is initializing
+      &.initializing.has-selected + label {
+        transition: none;
       }
 
       &:not(.has-selected) .better-select__trigger {
@@ -153,8 +162,8 @@ better-select {
     .better-select__trigger {
       height: 100%;
       width: 100%;
-      padding: $form-floating-input-padding-t $input-padding-x
-        $form-floating-input-padding-b $input-padding-x;
+      padding: $form-floating-input-padding-t $input-padding-x $form-floating-input-padding-b
+        $input-padding-x;
     }
   }
 }

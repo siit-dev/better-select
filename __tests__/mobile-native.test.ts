@@ -32,7 +32,6 @@ beforeEach(() => {
 it("doesn't open the dropdown on mobile", () => {
   const trigger = betterSelect?.querySelector<HTMLElement>('.better-select__trigger')!;
   trigger.click();
-  console.log(betterSelect!.className);
   expect(betterSelect?.classList.contains('open')).toBeFalsy();
   expect(betterSelectInstance?.opened).toBeFalsy();
 });

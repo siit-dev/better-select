@@ -76,11 +76,15 @@ export default class BetterSelect {
   #originalStyle: string | null = null;
 
   #selectedOption: BetterSelectAnchorOption | null = null;
+  #itemHeight: number = 40;
   #selectedOptionIndex: number | null = null;
   #searchString: string = '';
-  #searchTimeout: number | null = null;
+  #searchTimeoutInstance: number | null = null;
+  #searchResetTimeout: number = 1500;
 
   #mutationObserver: MutationObserver | null = null;
+
+  #form: HTMLFormElement | null = null;
 
   /**
    * create the custom select
@@ -100,13 +104,16 @@ export default class BetterSelect {
 
     this.#element.dataset.betterSelectInit = 'true';
     this.#element.betterSelectInstance = this;
+    this.#form = this.#element.form || this.#element.closest('form') || null;
 
     this.#initialize();
   }
 
-  #loadSettings(settings: BetterSelectSettings = {}) {
+  #loadSettings(settings: BetterSelectSettings) {
     // Keep only the settings that are defined.
-    settings = Object.fromEntries(Object.entries(settings).filter(([, value]) => value !== undefined));
+    settings = Object.fromEntries(
+      Object.entries(settings).filter(([, value]) => value !== undefined),
+    );
 
     const {
       skipEmpty,
@@ -167,12 +174,23 @@ export default class BetterSelect {
    * get the values from the original select
    */
   #getValues() {
+    const previousValue = this.#value;
     this.#value = this.#element.value;
+
+    // Dispatch a change event if the value changed.
+    if (previousValue !== this.#value) {
+      this.#triggerEvent(`betterSelect.change`, {
+        previousValue,
+        value: this.#value,
+      });
+    }
+
     if ((!this.#value || this.#fixedPlaceholder) && this.placeholder) {
       this.#title = this.placeholder;
     } else {
       const selectedOption = this.#element.options[this.#element.selectedIndex];
-      this.#title = selectedOption?.text && selectedOption?.text.length ? selectedOption.text : this.#value;
+      this.#title =
+        selectedOption?.text && selectedOption?.text.length ? selectedOption.text : this.#value;
     }
   }
 
@@ -184,6 +202,7 @@ export default class BetterSelect {
     this.#triggerEl = document.createElement('a');
     this.#triggerEl.style.display = 'block';
     this.#triggerEl.href = '#';
+    this.#triggerEl.tabIndex = 0;
     this.#triggerEl.className = this.#triggerClass;
     this.#triggerTitleEl = document.createElement('span');
     this.#triggerEl.append(this.#triggerTitleEl);
@@ -191,8 +210,8 @@ export default class BetterSelect {
     // create the wrapper
     this.#wrapperEl = this.#wrapperEl || document.createElement('div');
     this.#wrapperEl.classList.add(this.#wrapperClass);
+    this.#wrapperEl.classList.add('initializing');
     this.#wrapperEl.style.zIndex = this.#zIndex.toString();
-    this.#wrapperEl.tabIndex = 0;
     if (this.#element.name) {
       const wrapperClass = this.#sanitizeClassName(`${this.#wrapperClass}-${this.#element.name}`);
       this.#wrapperEl.classList.add(wrapperClass);
@@ -221,7 +240,10 @@ export default class BetterSelect {
 
     // initialize the UI values
     this.updateUI();
-    window.requestAnimationFrame(() => this.#checkIfMobile());
+    window.requestAnimationFrame(() => {
+      this.#checkIfMobile();
+      this.#wrapperEl?.classList.remove('initializing');
+    });
   }
 
   #sanitizeClassName(className: string): string {
@@ -291,6 +313,9 @@ export default class BetterSelect {
       this.#dropdownEl.replaceWith(dropdownEl);
     }
     this.#dropdownEl = dropdownEl;
+
+    // Update the item height
+    this.#itemHeight = this.#dropdownListEl?.querySelector('li')?.offsetHeight || this.#itemHeight;
   }
 
   /**
@@ -314,7 +339,9 @@ export default class BetterSelect {
     });
 
     this.#selectedOption = this.#options.find(option => option.isActive) || null;
-    this.#selectedOptionIndex = this.#selectedOption ? this.#options.indexOf(this.#selectedOption) : null;
+    this.#selectedOptionIndex = this.#selectedOption
+      ? this.#options.indexOf(this.#selectedOption)
+      : null;
 
     this.updateDrowdownSelection();
   }
@@ -429,7 +456,9 @@ export default class BetterSelect {
    */
   #addListeners() {
     // listen to the changes to the original select
-    ['change', 'selectActive'].forEach(type => this.#element.addEventListener(type, this.updateUI.bind(this)));
+    ['change', 'selectActive', 'input'].forEach(type =>
+      this.#element.addEventListener(type, this.updateUI.bind(this)),
+    );
 
     // open the dropdown on click on the trigger
     this.#triggerEl?.addEventListener('click', this.#onTriggerClick.bind(this));
@@ -453,10 +482,15 @@ export default class BetterSelect {
       this.refreshOptions();
     });
     this.#mutationObserver.observe(this.#element, { childList: true });
+
+    // Listen to the "reset" event on the form, if any.
+    this.#form?.addEventListener('reset', this.#onFormReset.bind(this));
   }
 
   #removeListeners() {
-    ['change', 'selectActive'].forEach(type => this.#element.removeEventListener(type, this.updateUI.bind(this)));
+    ['change', 'selectActive', 'input'].forEach(type =>
+      this.#element.removeEventListener(type, this.updateUI.bind(this)),
+    );
 
     this.#triggerEl?.removeEventListener('click', this.#onTriggerClick.bind(this));
     document.body.removeEventListener('click', this.#onOutsideClick.bind(this));
@@ -469,6 +503,8 @@ export default class BetterSelect {
     window.removeEventListener('keydown', this.#onKeyDown.bind(this));
     this.#mutationObserver?.disconnect();
     this.#mutationObserver = null;
+
+    this.#form?.removeEventListener('reset', this.#onFormReset.bind(this));
   }
 
   #onTriggerClick(e: MouseEvent) {
@@ -500,8 +536,7 @@ export default class BetterSelect {
       }
 
       if (shouldUpdate) {
-        this.#element.value = selected?.value || '';
-        this.#element.dispatchEvent(new CustomEvent('change', { bubbles: true }));
+        this.value = selected?.value || '';
       }
       this.close();
     }
@@ -520,20 +555,45 @@ export default class BetterSelect {
     this.#checkIfMobile();
   }
 
+  async #onFormReset() {
+    // Wait for the form to reset - the reset event is dispatched before the form is actually reset.
+    await new Promise(resolve => setTimeout(resolve, 0));
+    this.updateUI();
+  }
+
+  #isFocused(e: KeyboardEvent) {
+    return (
+      this.#wrapperEl?.contains(document.activeElement) ||
+      this.#wrapperEl?.contains(e.target as HTMLElement)
+    );
+  }
+
   #onKeyDown(e: KeyboardEvent) {
-    if (e.isComposing || e.keyCode === 229 || e.metaKey || e.ctrlKey || e.altKey) {
+    if (!this.#isFocused(e)) {
       return;
     }
 
+    if (
+      e.isComposing ||
+      e.keyCode === 229 ||
+      e.metaKey ||
+      e.ctrlKey ||
+      e.altKey ||
+      e.key === 'Tab'
+    ) {
+      return;
+    }
+
+    // Open the dropdown on Space or Enter.
     if (!this.#opened) {
-      // If the dropdown is not open, we only care about the trigger.
-      if (this.#wrapperEl?.contains(e.target as HTMLElement) && (e.key === 'Enter' || e.key === ' ')) {
+      if (
+        this.#wrapperEl?.contains(e.target as HTMLElement) &&
+        (e.key === 'Enter' || e.key === ' ')
+      ) {
         e.preventDefault();
         this.toggle();
+        return;
       }
-
-      // If the dropdown is not open, we don't care about the rest of the keys.
-      return;
     }
 
     e.preventDefault();
@@ -569,12 +629,12 @@ export default class BetterSelect {
     }
 
     if (e.key === 'PageUp') {
-      this.#selectRelative(-10);
+      this.#selectRelative(this.#getPageSize() * -1);
       return;
     }
 
     if (e.key === 'PageDown') {
-      this.#selectRelative(10);
+      this.#selectRelative(this.#getPageSize());
       return;
     }
 
@@ -594,6 +654,12 @@ export default class BetterSelect {
   }
 
   #select = (option: BetterSelectAnchorOption | null) => {
+    // If the dropdown is not open, simply update the value.
+    if (!this.#opened) {
+      this.value = option?.value || '';
+      return;
+    }
+
     this.#selectedOption = option;
     this.#selectedOptionIndex = option ? this.#options.indexOf(option) : -1;
     this.updateDrowdownSelection();
@@ -602,7 +668,8 @@ export default class BetterSelect {
   #selectRelative = (offset: number) => {
     // To do: skip disabled options.
     const currentIndex = this.#selectedOptionIndex || 0;
-    const next = this.#options[(currentIndex + offset + this.#options.length) % this.#options.length];
+    const next =
+      this.#options[(currentIndex + offset + this.#options.length) % this.#options.length];
     this.#select(next);
   };
 
@@ -624,11 +691,25 @@ export default class BetterSelect {
         return;
       }
 
-      this.#element.value = current.value;
-      this.#element.dispatchEvent(new CustomEvent('change', { bubbles: true }));
+      this.value = current.value;
       this.updateUI();
     }
     this.close();
+  };
+
+  /**
+   * Get the number of items that fit in the dropdown.
+   */
+  #getPageSize = (): number => {
+    const calculated = Math.floor(this.#dropdownEl?.offsetHeight || 300 / this.#itemHeight);
+    const pageSize = Math.max(calculated, 1);
+
+    // Don't allow the page size to be larger or equal to the number of options - this would make page up/down useless.
+    if (pageSize >= this.#options.length) {
+      return this.#options.length - 1;
+    }
+
+    return pageSize;
   };
 
   #search = (key: string) => {
@@ -640,12 +721,12 @@ export default class BetterSelect {
     }
 
     // Clear the search string after some time.
-    if (this.#searchTimeout) {
-      window.clearTimeout(this.#searchTimeout);
+    if (this.#searchTimeoutInstance) {
+      window.clearTimeout(this.#searchTimeoutInstance);
     }
-    this.#searchTimeout = window.setTimeout(() => {
+    this.#searchTimeoutInstance = window.setTimeout(() => {
       this.#searchString = '';
-    }, 1500);
+    }, this.#searchResetTimeout);
   };
 
   get opened() {
@@ -703,5 +784,14 @@ export default class BetterSelect {
 
   get element() {
     return this.#element;
+  }
+
+  get value() {
+    return this.#value;
+  }
+
+  set value(value: string | number | null) {
+    this.#element.value = value?.toString() || '';
+    this.#element.dispatchEvent(new CustomEvent('change', { bubbles: true }));
   }
 }

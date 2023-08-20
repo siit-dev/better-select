@@ -1,6 +1,6 @@
 'use strict';
 
-import { beforeAll, beforeEach, it, expect, jest } from '@jest/globals';
+import { beforeAll, beforeEach, it, expect, jest, test } from '@jest/globals';
 import '../__mocks__/stubs.mock';
 
 import BetterSelect from '../src/index';
@@ -250,4 +250,46 @@ it("triggers the change event on clicking the placeholder if the 'alwaysTriggerC
   const firstOption = betterSelect!.querySelector<HTMLAnchorElement>('.better-select__dropdown-list li:first-child a')!;
   firstOption.click();
   expect(changeCallback).toHaveBeenCalled();
+});
+
+test("resetting a form resets better-select's value", async () => {
+  document.body.innerHTML = `
+    <form id="simple-form">
+      <select name="select" id="select1">
+        <option value="">Placeholder</option>
+        <option value="2">Option 2</option>
+        <option value="3" disabled>Option 3</option>
+        <option value="4">Option 4</option>
+        <option value="5">Option 5</option>
+      </select>
+      <button type="reset" id="reset">Reset</button>
+    </form>
+  `;
+
+  const form = document.querySelector<HTMLFormElement>('#simple-form')!;
+  select = document.querySelector('#select1');
+  betterSelectInstance = new BetterSelect(select, {
+    skipEmpty: false,
+    alwaysTriggerChange: true,
+  });
+  betterSelect = select!.closest('.better-select');
+  expect(betterSelectInstance!.value).toBe('');
+  betterSelectInstance.toggle(true);
+  betterSelectInstance.value = '2';
+  expect(betterSelectInstance!.value).toBe('2');
+
+  const resetButton = document.querySelector<HTMLButtonElement>('#reset')!;
+  resetButton.click();
+
+  // Wait for the reset to be applied
+  await new Promise(resolve => setTimeout(resolve, 10));
+  expect(select?.value).toBe('');
+  expect(betterSelectInstance!.value).toBe('');
+
+  // Resetting the form programatically
+  betterSelectInstance.value = '2';
+  expect(betterSelectInstance!.value).toBe('2');
+  form.reset();
+  await new Promise(resolve => setTimeout(resolve, 10));
+  expect(betterSelectInstance!.value).toBe('');
 });

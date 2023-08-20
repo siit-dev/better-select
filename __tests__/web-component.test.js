@@ -1,7 +1,12 @@
 'use strict';
 
+import { getElementInternals } from '../__mocks__/ElementInternals.mock';
 import '../__mocks__/stubs.mock';
-const { registerWebComponent, BetterSelectComponent, defaultBetterSelectSettings } = require('../src/index');
+const {
+  registerWebComponent,
+  BetterSelectComponent,
+  defaultBetterSelectSettings,
+} = require('../src/index');
 
 beforeAll(() => {
   registerWebComponent();
@@ -23,6 +28,26 @@ it('initializes a better select instance using web components', () => {
   const betterSelect = document.querySelector('better-select');
   expect(betterSelect).toBeInstanceOf(BetterSelectComponent);
   expect(betterSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+});
+
+it('allows getting and setting a value', () => {
+  document.body.innerHTML = `
+    <better-select>
+      <select name="select" id="select1">
+        <option value="1">Option 1</option>
+        <option value="2">Option 2</option>
+        <option value="3">Option 3</option>
+        <option value="4">Option 4</option>
+        <option value="5">Option 5</option>
+      </select>
+    </better-select>
+  `;
+
+  const betterSelect = document.querySelector('better-select');
+
+  betterSelect.value = '1';
+  expect(betterSelect.value).toBe('1');
+  expect(betterSelect.betterSelect.value).toBe('1');
 });
 
 it('reinitializes the better select instance when running update', () => {
@@ -230,4 +255,102 @@ test('moving a web component element reinitializes it', () => {
   const thirdInstance = betterSelect.betterSelect;
   expect(thirdInstance).not.toBe(firstInstance);
   expect(betterSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+});
+
+test('it updates the ElementInternals when the value changes', async () => {
+  document.body.innerHTML = `
+    <form>
+      <better-select>
+        <select name="select" id="select1" required>
+          <option value="" selected>Select an option</option>
+          <option value="1">Option 1</option>
+          <option value="2">Option 2</option>
+          <option value="3">Option 3</option>
+          <option value="4">Option 4</option>
+          <option value="5">Option 5</option>
+        </select>
+      </better-select>
+    </form>
+  `;
+
+  const betterSelect = document.querySelector('better-select');
+  expect(betterSelect).toBeInstanceOf(BetterSelectComponent);
+  expect(betterSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+  expect(betterSelect.attachInternals).toBeDefined();
+  expect(betterSelect.constructor.formAssociated).toBe(true);
+
+  const internals = getElementInternals(betterSelect);
+  expect(internals).not.toBeNull();
+  expect(internals.getFormValue()).toBe(betterSelect.value);
+  expect(internals.checkValidity()).toBe(false);
+  expect(internals.validationMessage).toBeTruthy();
+  expect(internals.validity).toMatchObject({
+    badInput: false,
+    customError: false,
+    patternMismatch: false,
+    rangeOverflow: false,
+    rangeUnderflow: false,
+    stepMismatch: false,
+    tooLong: false,
+    tooShort: false,
+    typeMismatch: false,
+    valid: false,
+    valueMissing: true,
+  });
+
+  betterSelect.betterSelect.value = '1';
+  expect(internals.getFormValue()).toBe('1');
+  expect(internals.checkValidity()).toBe(true);
+  expect(internals.validationMessage).toBeFalsy();
+  expect(internals.validity).toMatchObject({
+    badInput: false,
+    customError: false,
+    patternMismatch: false,
+    rangeOverflow: false,
+    rangeUnderflow: false,
+    stepMismatch: false,
+    tooLong: false,
+    tooShort: false,
+    typeMismatch: false,
+    valid: true,
+    valueMissing: false,
+  });
+
+  const form = document.querySelector('form');
+  form.reset();
+  await new Promise(resolve => setTimeout(resolve, 10));
+
+  expect(internals.getFormValue()).toBe('');
+  expect(internals.checkValidity()).toBe(false);
+});
+
+test("it doesn't fail if the browser doesn't support ElementInternals", () => {
+  const originalAttachInternals = HTMLElement.prototype.attachInternals;
+  HTMLElement.prototype.attachInternals = undefined;
+
+  document.body.innerHTML = `
+    <better-select>
+      <select name="select" id="select1" required>
+        <option value="" selected>Select an option</option>
+        <option value="1">Option 1</option>
+        <option value="2">Option 2</option>
+        <option value="3">Option 3</option>
+        <option value="4">Option 4</option>
+        <option value="5">Option 5</option>
+      </select>
+    </better-select>
+  `;
+
+  const betterSelect = document.querySelector('better-select');
+  expect(betterSelect).toBeInstanceOf(BetterSelectComponent);
+  expect(betterSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+  expect(betterSelect.attachInternals).toBeUndefined();
+  betterSelect.betterSelect.value = '1';
+  expect(betterSelect.betterSelect.value).toBe('1');
+  betterSelect._updateInternals();
+
+  const internals = getElementInternals(betterSelect);
+  expect(internals).toBeUndefined();
+
+  HTMLElement.prototype.attachInternals = originalAttachInternals;
 });

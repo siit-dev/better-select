@@ -2,6 +2,13 @@ import BetterSelect, { BetterSelectSettings, defaultBetterSelectSettings } from 
 
 export default class BetterSelectComponent extends HTMLElement {
   /**
+   * Use the "ElementInternals" API to make the component form-associated.
+   */
+  static get formAssociated() {
+    return true;
+  }
+
+  /**
    * Don't skip empty options.
    * Web component attribute: 'no-skip-empty'
    */
@@ -67,6 +74,16 @@ export default class BetterSelectComponent extends HTMLElement {
   betterSelectInstance: BetterSelect | null = null;
 
   /**
+   * The ElementInternals instance.
+   */
+  internals: ElementInternals | null = null;
+
+  constructor() {
+    super();
+    this.internals = this.attachInternals?.() || null;
+  }
+
+  /**
    * initialize better select when it's inserted ("connected") into the DOM
    */
   connectedCallback(): void {
@@ -87,6 +104,42 @@ export default class BetterSelectComponent extends HTMLElement {
     }
 
     this.betterSelectInstance = new BetterSelect(this._select, this.getSettings());
+
+    this._setupInternals();
+  }
+
+  /**
+   * Setup the ElementInternals instance.
+   */
+  _setupInternals(): void {
+    if (!this.internals || !this._select) return;
+
+    this._updateInternals();
+    this.addEventListener('betterSelect.change', () => {
+      this._updateInternals();
+    });
+    ['reset', 'submit'].forEach(event => {
+      this.internals?.form?.addEventListener(event, () => {
+        this._updateInternals();
+      });
+    });
+  }
+
+  /**
+   * Update the ElementInternals instance.
+   */
+  _updateInternals(): void {
+    if (!this.internals || !this._select) return;
+
+    const setFormValue = this.internals.setFormValue.bind(this.internals);
+    const setValidity = this.internals.setValidity.bind(this.internals);
+
+    // Set the value of the native select
+    setFormValue(this._select?.value || '');
+
+    // Get the validity state from the native select
+    const validity: ValidityState = this._select!.validity;
+    setValidity(validity, this._select?.validationMessage || '');
   }
 
   get betterSelect() {
@@ -175,6 +228,16 @@ export default class BetterSelectComponent extends HTMLElement {
   disconnectedCallback() {
     if (this.betterSelectInstance) {
       this.betterSelectInstance.destroy();
+    }
+  }
+
+  get value() {
+    return this.betterSelectInstance?.value?.toString() || '';
+  }
+
+  set value(value: string) {
+    if (this.betterSelectInstance) {
+      this.betterSelectInstance.value = value;
     }
   }
 }

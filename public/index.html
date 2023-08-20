@@ -12,7 +12,6 @@
       <fieldset class="wrapper my-4">
         <h2 class="h4">Default</h2>
         <div class="form-group">
-          <label class="form-label">Select label</label>
           <better-select>
             <select name="select" id="select1" class="form-control">
               <option value="1">Option 1</option>
@@ -26,8 +25,9 @@
       </fieldset>
 
       <fieldset class="wrapper my-4">
-        <h2>With Label</h2>
+        <h2 class="h4">With Label</h2>
         <better-select placeholder="Select">
+          <label class="form-label">Select label</label>
           <select name="select" id="select2">
             <option value="1">Option 1</option>
             <option value="2">Option 2</option>
@@ -39,21 +39,39 @@
       </fieldset>
 
       <fieldset class="wrapper my-4">
-        <h2>With Floating labels</h2>
-        <better-select class="form-floating">
-          <select name="select" id="select3">
-            <option value="1">Option 1</option>
-            <option value="2">Option 2</option>
-            <option value="3">Option 3</option>
-            <option value="4">Option 4</option>
-            <option value="5">Option 5</option>
-          </select>
-          <label>Select With Floating label</label>
-        </better-select>
+        <div class="row">
+          <div class="col-md-6">
+            <h2 class="h4">With Floating labels</h2>
+            <better-select class="form-floating">
+              <select name="select" id="select3">
+                <option value="1">Option 1</option>
+                <option value="2">Option 2</option>
+                <option value="3">Option 3</option>
+                <option value="4">Option 4</option>
+                <option value="5">Option 5</option>
+              </select>
+              <label>Select With Floating label</label>
+            </better-select>
+          </div>
+          <div class="col-md-6">
+            <h2 class="h4">With Floating labels and initial placeholder</h2>
+            <better-select class="form-floating" no-skip-empty>
+              <select name="select" id="select3a">
+                <option value="" selected>Select an option</option>
+                <option value="1">Option 1</option>
+                <option value="2">Option 2</option>
+                <option value="3">Option 3</option>
+                <option value="4">Option 4</option>
+                <option value="5">Option 5</option>
+              </select>
+              <label>Select With Floating label</label>
+            </better-select>
+          </div>
+        </div>
       </fieldset>
 
       <fieldset class="wrapper my-4 custom-styles-wrapper">
-        <h2>With custom styles</h2>
+        <h2 class="h4">With custom styles</h2>
         <better-select>
           <select name="select" id="select4">
             <option value="1" data-style="--color: red">Option 1</option>
@@ -66,17 +84,34 @@
       </fieldset>
 
       <fieldset class="wrapper my-4">
-        <h2>With placeholder attribute</h2>
-        <better-select placeholder="Please select an option">
-          <select name="select" id="select-placeholder">
-            <option value="" disabled selected>Select an option</option>
-            <option value="1">Option 1</option>
-            <option value="2">Option 2</option>
-            <option value="3" disabled>Option 3</option>
-            <option value="4">Option 4</option>
-            <option value="5">Option 5</option>
-          </select>
-        </better-select>
+        <div class="row">
+          <div class="col-md-6">
+            <h2 class="h4">With placeholder attribute</h2>
+            <better-select placeholder="Please select an option">
+              <select name="select" id="select-placeholder">
+                <option value="" disabled selected>Select an option</option>
+                <option value="1">Option 1</option>
+                <option value="2">Option 2</option>
+                <option value="3" disabled>Option 3</option>
+                <option value="4">Option 4</option>
+                <option value="5">Option 5</option>
+              </select>
+            </better-select>
+          </div>
+          <div class="col-md-6">
+            <h2 class="h4">With fixed placeholder</h2>
+            <better-select placeholder="Please select an option" fixed-placeholder>
+              <select name="select" id="select-placeholder">
+                <option value="" disabled selected>Select an option</option>
+                <option value="1">Option 1</option>
+                <option value="2">Option 2</option>
+                <option value="3" disabled>Option 3</option>
+                <option value="4">Option 4</option>
+                <option value="5">Option 5</option>
+              </select>
+            </better-select>
+          </div>
+        </div>
       </fieldset>
 
       <fieldset class="wrapper my-4 bg-body-secondary p-4 rounded">
@@ -128,6 +163,36 @@
           </div>
         </div>
       </fieldset>
+
+      <form class="form-wrapper my-4 bg-light p-4 rounded" id="simple-form" novalidate>
+        <h2 class="h4 mb-4">Form with better select</h2>
+        <p class="alert bg-warning-subtle mb-4">
+          This form is using <code>novalidate</code> attribute to disable browser validation.
+          Instead, we're setting the <code>was-validated</code> Bootstrap class to style the form
+          validation status.
+        </p>
+        <div class="form-group my-2">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-control" placeholder="Enter your name" required />
+        </div>
+        <div class="form-group my-2">
+          <label class="form-label">Select label</label>
+          <better-select name="better_select">
+            <select name="select" id="select1" class="form-control" required>
+              <option value="" disabled selected>Select an option</option>
+              <option value="1">Option 1</option>
+              <option value="2">Option 2</option>
+              <option value="3">Option 3</option>
+              <option value="4">Option 4</option>
+              <option value="5">Option 5</option>
+            </select>
+          </better-select>
+        </div>
+        <div class="mt-4">
+          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="reset" class="btn btn-secondary">Reset</button>
+        </div>
+      </form>
     </div>
   </body>
 </html>
