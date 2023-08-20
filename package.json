@@ -1,6 +1,6 @@
 {
   "name": "@smartimpact-it/better-select",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Web component for a better select",
   "main": "dist/umd/index.js",
   "es2015": "dist/esm/index.js",
