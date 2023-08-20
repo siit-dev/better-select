@@ -11,7 +11,10 @@ declare global {
 export function registerForJquery() {
   if ('jQuery' in window) {
     (function ($: JQueryStatic) {
-      $.fn.betterSelect = function (this: JQuery<HTMLSelectElement>, settings: BetterSelectSettings = {}) {
+      $.fn.betterSelect = function (
+        this: JQuery<HTMLSelectElement>,
+        settings: BetterSelectSettings = {},
+      ) {
         this.each(function () {
           // don't initialize twice
           if (!this.betterSelectInstance) {
@@ -22,6 +25,8 @@ export function registerForJquery() {
       };
     })(window.jQuery as JQueryStatic);
   } else {
-    console.warn('BetterSelect: jQuery not found. You can still use the BetterSelect class directly.');
+    console.warn(
+      'BetterSelect: jQuery not found. You can still use the BetterSelect class directly.',
+    );
   }
 }
