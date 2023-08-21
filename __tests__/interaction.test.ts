@@ -31,7 +31,9 @@ beforeEach(() => {
 });
 
 const selectOption = (value: string | number) => {
-  betterSelect?.querySelector<HTMLAnchorElement>(`.better-select__dropdown-list a[data-value="${value}"]`)?.click();
+  betterSelect
+    ?.querySelector<HTMLAnchorElement>(`.better-select__dropdown-list a[data-value="${value}"]`)
+    ?.click();
 };
 const getSelectedOption = (): HTMLElement | null => {
   return betterSelect?.querySelector(`.better-select__dropdown-list li.is-active`) || null;
@@ -222,7 +224,9 @@ it("doesn't trigger the change event on clicking the placeholder", () => {
   betterSelectInstance.toggle(true);
   const changeCallback = jest.fn();
   betterSelect!.addEventListener('change', changeCallback);
-  const firstOption = betterSelect!.querySelector<HTMLAnchorElement>('.better-select__dropdown-list li:first-child a')!;
+  const firstOption = betterSelect!.querySelector<HTMLAnchorElement>(
+    '.better-select__dropdown-list li:first-child a',
+  )!;
   firstOption.click();
   expect(changeCallback).not.toHaveBeenCalled();
 });
@@ -247,7 +251,9 @@ it("triggers the change event on clicking the placeholder if the 'alwaysTriggerC
   betterSelectInstance.toggle(true);
   const changeCallback = jest.fn();
   betterSelect!.addEventListener('change', changeCallback);
-  const firstOption = betterSelect!.querySelector<HTMLAnchorElement>('.better-select__dropdown-list li:first-child a')!;
+  const firstOption = betterSelect!.querySelector<HTMLAnchorElement>(
+    '.better-select__dropdown-list li:first-child a',
+  )!;
   firstOption.click();
   expect(changeCallback).toHaveBeenCalled();
 });
@@ -292,4 +298,26 @@ test("resetting a form resets better-select's value", async () => {
   form.reset();
   await new Promise(resolve => setTimeout(resolve, 10));
   expect(betterSelectInstance!.value).toBe('');
+});
+
+it("doesn't allow to programmatically set a value that doesn't exist", () => {
+  document.body.innerHTML = `
+    <select name="select" id="select1">
+      <option value="">Placeholder</option>
+      <option value="2">Option 2</option>
+      <option value="3" disabled>Option 3</option>
+      <option value="4">Option 4</option>
+      <option value="5">Option 5</option>
+    </select>
+  `;
+
+  select = document.querySelector('#select1');
+  betterSelectInstance = new BetterSelect(select, {
+    skipEmpty: false,
+    alwaysTriggerChange: true,
+  });
+  betterSelect = select!.closest('.better-select');
+
+  betterSelectInstance.value = '6';
+  expect(betterSelectInstance.value).toBe('');
 });

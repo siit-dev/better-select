@@ -34,7 +34,7 @@ const getTemporarilySelectedOptionValue = (): string | null => {
 };
 const getValue = (): string | null => {
   if (betterSelectInstance?.opened) {
-    return getTemporarilySelectedOptionValue();
+    return getTemporarilySelectedOptionValue() || getSelectedOptionValue();
   }
   return getSelectedOptionValue();
 };
@@ -63,11 +63,16 @@ beforeAll(() => {
 beforeEach(() => {
   document.body.innerHTML = `
     <select name="select" id="select1">
-      <option value="1">Option 1</option>
+      <option value="1" disabled>Option 1</option>
       <option value="2">Option 2</option>
-      <option value="3" disabled>Option 3</option>
-      <option value="4" selected>Option 4</option>
-      <option value="5">Option 5</option>
+      <option value="3" >Option 3</option>
+      <option value="4" disabled>Option 4</option>
+      <option value="5" selected>Option 5</option>
+      <option value="6">Option 6</option>
+      <option value="7">Option 7</option>
+      <option value="8" disabled>Option 8</option>
+      <option value="9">Option 9</option>
+      <option value="10" disabled>Option 10</option>
     </select>
   `;
 
@@ -101,7 +106,7 @@ it.each([{ isOpen: true }, { isOpen: false }])(
   'goes to the next option when pressing the down arrow (dropdown open: $isOpen)',
   ({ isOpen }) => {
     betterSelectInstance!.toggle(true);
-    selectOption('1');
+    selectOption('2');
     betterSelectInstance!.toggle(isOpen);
 
     if (isOpen) {
@@ -109,16 +114,17 @@ it.each([{ isOpen: true }, { isOpen: false }])(
     }
 
     pressKey('ArrowDown');
-    expect(getValue()).toBe('2');
-
-    pressKey('ArrowDown');
     expect(getValue()).toBe('3');
 
-    // Rewind to the first option
-    selectOption('5');
+    pressKey('ArrowDown');
+    expect(getValue()).toBe('5');
+
+    // Don't rewind to the first option
+    selectOption('9');
+    expect(getValue()).toBe('9');
     betterSelectInstance!.toggle(isOpen);
     pressKey('ArrowDown');
-    expect(getValue()).toBe('1');
+    expect(getValue()).toBe('9');
   },
 );
 
@@ -133,24 +139,26 @@ it.each([{ isOpen: true }, { isOpen: false }])(
       expect(getTemporarilySelectedOptionValue()).toBeNull();
     }
     pressKey('ArrowUp');
-    expect(getValue()).toBe('5');
+    expect(getValue()).toBe('3');
 
-    pressKey('ArrowUp');
-    expect(getValue()).toBe('4');
-
-    // Rewind to the first option
-    selectOption('1');
+    betterSelectInstance!.value = '7';
     betterSelectInstance!.toggle(isOpen);
     pressKey('ArrowUp');
-    expect(getValue()).toBe('5');
+    expect(getValue()).toBe('6');
+
+    // Don't rewind to the last option
+    selectOption('2');
+    betterSelectInstance!.toggle(isOpen);
+    pressKey('ArrowUp');
+    expect(getValue()).toBe('2');
   },
 );
 
 it.each([{ isOpen: true }, { isOpen: false }])(
-  'goes to the first option when pressing the home key (dropdown open: $isOpen)',
+  'goes to the first enabled option when pressing the home key (dropdown open: $isOpen)',
   ({ isOpen }) => {
     betterSelectInstance!.toggle(true);
-    selectOption('2');
+    selectOption('7');
     betterSelectInstance!.toggle(isOpen);
 
     if (isOpen) {
@@ -158,7 +166,7 @@ it.each([{ isOpen: true }, { isOpen: false }])(
     }
 
     pressKey('Home');
-    expect(getValue()).toBe('1');
+    expect(getValue()).toBe('2');
   },
 );
 
@@ -174,7 +182,7 @@ it.each([{ isOpen: true }, { isOpen: false }])(
     }
 
     pressKey('End');
-    expect(getValue()).toBe('5');
+    expect(getValue()).toBe('9');
   },
 );
 
@@ -192,10 +200,10 @@ it.each([{ isOpen: true }, { isOpen: false }])(
     pressKey('PageDown');
     expect(getValue()).not.toBe('2');
 
-    selectOption('2');
+    selectOption('9');
     betterSelectInstance!.toggle(isOpen);
     pressKey('PageUp');
-    expect(getValue()).not.toBe('2');
+    expect(getValue()).not.toBe('9');
   },
 );
 
@@ -207,22 +215,33 @@ it('selects the temporarily selected option when pressing the enter key', () => 
   expect(getSelectedOptionValue()).toBe('2');
   pressKey('ArrowDown');
   pressKey('ArrowDown');
-  expect(getTemporarilySelectedOptionValue()).toBe('4');
+  expect(getTemporarilySelectedOptionValue()).toBe('5');
   pressKey('Enter');
-  expect(getSelectedOptionValue()).toBe('4');
+  expect(getSelectedOptionValue()).toBe('5');
 });
 
 it("doesn't select disabled options", () => {
   betterSelectInstance!.toggle(true);
-  selectOption('2');
+  selectOption('3');
   betterSelectInstance!.toggle(true);
-  expect(getSelectedOptionValue()).toBe('2');
+  expect(getSelectedOptionValue()).toBe('3');
 
   pressKey('ArrowDown');
-  expect(getTemporarilySelectedOptionValue()).toBe('3');
+  expect(getTemporarilySelectedOptionValue()).not.toBe('4');
 
   pressKey('Enter');
-  expect(getSelectedOptionValue()).toBe('2');
+  expect(getSelectedOptionValue()).not.toBe('4');
+
+  betterSelectInstance!.toggle(true);
+  selectOption('5');
+  betterSelectInstance!.toggle(true);
+  expect(getSelectedOptionValue()).toBe('5');
+
+  pressKey('ArrowUp');
+  expect(getTemporarilySelectedOptionValue()).not.toBe('4');
+
+  pressKey('Enter');
+  expect(getSelectedOptionValue()).not.toBe('4');
 });
 
 it('closes the dropdown when pressing the escape key', () => {
@@ -239,7 +258,7 @@ it.each([{ isOpen: true }, { isOpen: false }])(
     <select name="select" id="select1">
       <option value="1">Option 1</option>
       <option value="2">Option 2</option>
-      <option value="3" disabled>Option 3</option>
+      <option value="3" disabled>Third</option>
       <option value="4" selected>Option 4</option>
       <option value="5">Option 5</option>
       <option value="6">Sixth option</option>
@@ -271,6 +290,50 @@ it.each([{ isOpen: true }, { isOpen: false }])(
     expect(getValue()).toBe('7');
     pressKey('v');
     expect(getValue()).toBe('7');
+  },
+);
+
+it.each([{ isOpen: true }, { isOpen: false }])(
+  "doesn't find disabled options (dropdown open: $isOpen)",
+  ({ isOpen }) => {
+    document.body.innerHTML = `
+    <select name="select" id="select1">
+      <option value="1">Option 1</option>
+      <option value="2">Option 2</option>
+      <option value="3" disabled>Third</option>
+      <option value="4" selected>Option 4</option>
+      <option value="5">Option 5</option>
+      <option value="6">Sixth option</option>
+      <option value="7">Seventh option</option>
+    </select>
+  `;
+
+    select = document.querySelector('#select1');
+    betterSelectInstance = new BetterSelect(select);
+    betterSelect = select?.closest('.better-select') || null;
+
+    betterSelectInstance!.toggle(true);
+    selectOption('1');
+    betterSelectInstance!.toggle(isOpen);
+
+    if (isOpen) {
+      expect(getTemporarilySelectedOptionValue()).toBeNull();
+    }
+
+    pressKey('t');
+    pressKey('h');
+    pressKey('i');
+    expect(getValue()).not.toBe('7');
+
+    const thirdOption = select?.options[2]!;
+    expect(thirdOption.disabled).toBe(true);
+    thirdOption.removeAttribute('disabled');
+    thirdOption.disabled = false;
+    betterSelectInstance.updateUI();
+
+    pressKey('r');
+    pressKey('d');
+    expect(getValue()).toBe('3');
   },
 );
 
@@ -341,4 +404,28 @@ it('pressing Enter or Space on the trigger toggles the dropdown', () => {
   expect(betterSelectInstance!.opened).toBe(true);
   pressTriggerKey('Enter');
   expect(betterSelectInstance!.opened).toBe(false);
+});
+
+it('handles select fields with no enabled options', () => {
+  document.body.innerHTML = `
+    <select name="select" id="select1">
+      <option value="1" disabled>Option 1</option>
+      <option value="2" disabled>Option 2</option>
+      <option value="3" disabled>Option 3</option>
+    </select>
+  `;
+
+  select = document.querySelector('#select1');
+  betterSelectInstance = new BetterSelect(select);
+  betterSelect = select?.closest('.better-select') || null;
+
+  betterSelectInstance!.toggle(true);
+  pressKey('ArrowDown');
+  expect(getTemporarilySelectedOptionValue()).toBeNull();
+  pressKey('ArrowUp');
+  expect(getTemporarilySelectedOptionValue()).toBeNull();
+  pressKey('Enter');
+  expect(getSelectedOptionValue()).toBeNull();
+  expect(betterSelectInstance.value).toBe('');
+  expect(select!.value).toBe('');
 });

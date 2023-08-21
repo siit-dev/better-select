@@ -69,7 +69,7 @@ export default class BetterSelect {
   #opened = false;
 
   mobileMediaQuery: MediaQueryList | null = null;
-  #isMobile = false;
+  #isMobileAndNative = false;
 
   static zIndex = 100;
   #zIndex!: number;
@@ -234,9 +234,7 @@ export default class BetterSelect {
       }px; z-index: ${this.#zIndex}; width: 100%;`;
     });
 
-    if (this.#nativeOnMobile) {
-      this.mobileMediaQuery = window.matchMedia(`(max-width: ${this.#mobileBreakpoint}px)`);
-    }
+    this.mobileMediaQuery = window.matchMedia(`(max-width: ${this.#mobileBreakpoint}px)`);
 
     // initialize the UI values
     this.updateUI();
@@ -323,7 +321,7 @@ export default class BetterSelect {
    */
   updateUI() {
     this.#getValues();
-    this.#element.style.visibility = this.#isMobile ? 'visible' : 'hidden';
+    this.#element.style.visibility = this.#isMobileAndNative ? 'visible' : 'hidden';
     if (this.#triggerTitleEl) {
       this.#triggerTitleEl.innerHTML = this.#title || '';
     }
@@ -335,6 +333,7 @@ export default class BetterSelect {
 
     this.#options = this.#options.map(item => {
       item.isActive = item.originalOption.value === this.#value;
+      item.disabled = item.originalOption.disabled;
       return item;
     });
 
@@ -405,14 +404,16 @@ export default class BetterSelect {
   }
 
   #checkIfMobile() {
-    if (!this.mobileMediaQuery) return;
-
-    this.#isMobile = this.mobileMediaQuery.matches;
-    this.#element.style.visibility = this.#isMobile ? 'visible' : 'hidden';
-    this.#element.style.zIndex = (this.#isMobile ? 2 : 1).toString();
-    if (this.#isMobile) {
+    this.#isMobileAndNative = (this.mobileMediaQuery?.matches || false) && this.#nativeOnMobile;
+    this.#element.style.visibility = this.#isMobileAndNative ? 'visible' : 'hidden';
+    this.#element.style.zIndex = (this.#isMobileAndNative ? 2 : 1).toString();
+    if (this.#isMobileAndNative) {
       this.close();
     }
+  }
+
+  isMobileAndNative() {
+    return this.#isMobileAndNative;
   }
 
   /**
@@ -420,7 +421,7 @@ export default class BetterSelect {
    */
   toggle(newStatus: boolean | null = null) {
     // If the dropdown is open and we're on mobile, close it.
-    if (this.#isMobile) {
+    if (this.#isMobileAndNative) {
       newStatus = false;
     }
 
@@ -433,7 +434,10 @@ export default class BetterSelect {
       this.#setCurrentOption(this.#options.find(option => option.originalOption.selected) || null);
     }
 
-    if (this.#isMobile || this.#triggerEvent(`betterSelect.${newStatus ? 'open' : 'close'}`)) {
+    if (
+      this.#isMobileAndNative ||
+      this.#triggerEvent(`betterSelect.${newStatus ? 'open' : 'close'}`)
+    ) {
       this.#wrapperEl?.parentElement?.classList.toggle('has-open-better-select', newStatus);
       this.#wrapperEl?.classList.toggle('open', newStatus);
       this.#dropdownEl?.classList.toggle('open', newStatus);
@@ -460,6 +464,9 @@ export default class BetterSelect {
       this.#element.addEventListener(type, this.updateUI.bind(this)),
     );
 
+    // Switch focus to the trigger when focusing the custom select.
+    this.#element.addEventListener('focus', this.#onNativeSelectFocus.bind(this));
+
     // open the dropdown on click on the trigger
     this.#triggerEl?.addEventListener('click', this.#onTriggerClick.bind(this));
 
@@ -470,9 +477,7 @@ export default class BetterSelect {
     this.#wrapperEl?.addEventListener('click', this.#onWrapperClick.bind(this));
 
     // listen to media queries, to allow "native on mobile"
-    if (this.#nativeOnMobile) {
-      this.mobileMediaQuery?.addListener(this.#onMobileMediaQueryChange.bind(this));
-    }
+    this.mobileMediaQuery?.addListener(this.#onMobileMediaQueryChange.bind(this));
 
     // Listen to keyboard.
     window.addEventListener('keydown', this.#onKeyDown.bind(this));
@@ -492,13 +497,13 @@ export default class BetterSelect {
       this.#element.removeEventListener(type, this.updateUI.bind(this)),
     );
 
+    this.#element.removeEventListener('focus', this.#onNativeSelectFocus.bind(this));
+
     this.#triggerEl?.removeEventListener('click', this.#onTriggerClick.bind(this));
     document.body.removeEventListener('click', this.#onOutsideClick.bind(this));
     this.#wrapperEl?.removeEventListener('click', this.#onWrapperClick.bind(this));
 
-    if (this.#nativeOnMobile) {
-      this.mobileMediaQuery?.removeListener(this.#onMobileMediaQueryChange.bind(this));
-    }
+    this.mobileMediaQuery?.removeListener(this.#onMobileMediaQueryChange.bind(this));
 
     window.removeEventListener('keydown', this.#onKeyDown.bind(this));
     this.#mutationObserver?.disconnect();
@@ -545,6 +550,12 @@ export default class BetterSelect {
   #onOutsideClick(e: MouseEvent) {
     if (this.#opened && !this.#wrapperEl?.contains(e.target as HTMLElement)) {
       this.close();
+    }
+  }
+
+  #onNativeSelectFocus() {
+    if (!this.#isMobileAndNative) {
+      this.#triggerEl?.focus();
     }
   }
 
@@ -653,7 +664,47 @@ export default class BetterSelect {
     console.log('Unhandled key', e.key);
   }
 
+  #findNextEnabledOption = (
+    option: BetterSelectAnchorOption | null,
+    reverse: boolean = false,
+  ): BetterSelectAnchorOption | null => {
+    if (!option) {
+      return null;
+    }
+
+    if (!option.disabled) {
+      return option;
+    }
+
+    // Is there any enabled option??
+    if (this.#options.every(option => option.disabled)) {
+      return null;
+    }
+
+    // Skip disabled options.
+    const currentIndex = this.#options.indexOf(option);
+    let next: BetterSelectAnchorOption;
+    let index = currentIndex;
+    do {
+      index += reverse ? -1 : 1;
+
+      if (index >= this.#options.length) {
+        index = this.#options.length - 1;
+        reverse = true;
+      } else if (index < 0) {
+        index = 0;
+        reverse = false;
+      }
+
+      next = this.#options[index];
+    } while (next.disabled);
+
+    return next;
+  };
+
   #select = (option: BetterSelectAnchorOption | null) => {
+    option = this.#findNextEnabledOption(option);
+
     // If the dropdown is not open, simply update the value.
     if (!this.#opened) {
       this.value = option?.value || '';
@@ -666,11 +717,10 @@ export default class BetterSelect {
   };
 
   #selectRelative = (offset: number) => {
-    // To do: skip disabled options.
     const currentIndex = this.#selectedOptionIndex || 0;
-    const next =
-      this.#options[(currentIndex + offset + this.#options.length) % this.#options.length];
-    this.#select(next);
+    const nextIndex = Math.max(Math.min(offset + currentIndex, this.#options.length - 1), 0);
+    const next = this.#options[nextIndex];
+    this.#select(this.#findNextEnabledOption(next, offset < 0));
   };
 
   #selectFirst = () => {
@@ -680,17 +730,12 @@ export default class BetterSelect {
 
   #selectLast = () => {
     const last = this.#options[this.#options.length - 1];
-    this.#select(last);
+    this.#select(this.#findNextEnabledOption(last, true));
   };
 
   #persistCurrentSelection = () => {
     const current = this.#selectedOption;
     if (current && this.#element.value !== current.value) {
-      // Don't select disabled options.
-      if (current.disabled) {
-        return;
-      }
-
       this.value = current.value;
       this.updateUI();
     }
@@ -702,20 +747,15 @@ export default class BetterSelect {
    */
   #getPageSize = (): number => {
     const calculated = Math.floor(this.#dropdownEl?.offsetHeight || 300 / this.#itemHeight);
-    const pageSize = Math.max(calculated, 1);
-
-    // Don't allow the page size to be larger or equal to the number of options - this would make page up/down useless.
-    if (pageSize >= this.#options.length) {
-      return this.#options.length - 1;
-    }
-
-    return pageSize;
+    return Math.max(calculated, 1);
   };
 
   #search = (key: string) => {
     this.#searchString += key;
     const search = this.#searchString.toLowerCase();
-    const found = this.#options.find(({ label }) => label.toLowerCase().indexOf(search) === 0);
+    const found = this.#options.find(
+      ({ label, disabled }) => label.toLowerCase().indexOf(search) === 0 && !disabled,
+    );
     if (found) {
       this.#select(found);
     }

@@ -29,6 +29,19 @@ beforeEach(() => {
   setMatchMedia(true);
 });
 
+it('keeps the native select visible on mobile', () => {
+  expect(select?.style.visibility).toBe('visible');
+
+  betterSelectInstance!.updateUI();
+  expect(select?.style.visibility).toBe('visible');
+
+  setMatchMedia(false);
+  expect(select?.style.visibility).toBe('hidden');
+
+  setMatchMedia(true);
+  expect(select?.style.visibility).toBe('visible');
+});
+
 it("doesn't open the dropdown on mobile", () => {
   const trigger = betterSelect?.querySelector<HTMLElement>('.better-select__trigger')!;
   trigger.click();
@@ -55,4 +68,32 @@ it('closes the open dropdown when switching to mobile', () => {
   expect(betterSelectInstance?.opened).toBeFalsy();
   betterSelectInstance?.toggle(true);
   expect(betterSelectInstance?.opened).toBeTruthy();
+});
+
+it('displays the custom dropdown if nativeOnMobile is false', () => {
+  betterSelectInstance?.destroy();
+  betterSelectInstance = new BetterSelect(select, { nativeOnMobile: false });
+  betterSelect = select!.closest('.better-select');
+
+  // Desktop
+  setMatchMedia(false);
+  betterSelectInstance?.toggle(true);
+  expect(betterSelectInstance?.opened).toBeTruthy();
+  expect(betterSelect?.classList.contains('open')).toBeTruthy();
+  betterSelectInstance?.toggle(false);
+  expect(select?.style.visibility).toBe('hidden');
+
+  // Mobile
+  const callback = jest.fn();
+  betterSelect?.addEventListener('betterSelect.mobileBreakpoint', callback);
+  setMatchMedia(true);
+  expect(callback).toHaveBeenCalled();
+  betterSelectInstance?.toggle(true);
+  expect(betterSelectInstance?.opened).toBeTruthy();
+  expect(betterSelect?.classList.contains('open')).toBeTruthy();
+  expect(betterSelectInstance.isMobileAndNative()).toBeFalsy();
+  expect(select?.style.visibility).toBe('hidden');
+
+  betterSelectInstance.updateUI();
+  expect(select?.style.visibility).toBe('hidden');
 });
