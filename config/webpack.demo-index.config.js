@@ -5,46 +5,32 @@ const postcssConfig = require('./postcss.config');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const babelConfig = require('../babel.config');
 const webpack = require('webpack');
+const marked = require('marked');
+const fs = require('fs');
 
 const makeConfig = () => {
   const isDev = process.env.NODE_ENV === 'development';
 
   const plugins = [new webpack.EnvironmentPlugin({ NODE_ENV: 'production' })];
 
-  if (isDev) {
-    plugins.push(
-      new HtmlWebpackPlugin({
-        template: 'public/index.html',
-      }),
-      // new HtmlWebpackTagsPlugin({
-      //   tags: ['demo.js', 'main.css', 'app.css'],
-      //   append: true,
-      // }),
-    );
-  }
-
-  if (!isDev) {
-    plugins.push(
-      new MiniCssExtractPlugin({
-        filename: '../css/[name].css',
-        chunkFilename: '[id].css',
-      }),
-    );
-  }
+  plugins.push(
+    new HtmlWebpackPlugin({
+      template: 'public/demo-index.html',
+      templateParameters: {
+        readme: marked.parse(fs.readFileSync(path.resolve(__dirname, '../README.md'), 'utf8')),
+      },
+    }),
+  );
 
   const entries = {
     index: ['./src/index'],
-    main: ['./src/scss/main.scss'],
+    demo: ['./src/demo-index'],
   };
-
-  if (isDev) {
-    entries.demo = ['./src/demo-bs'];
-  }
 
   const config = {
     entry: entries,
     output: {
-      path: path.resolve(__dirname, '../dist/umd'),
+      path: path.resolve(__dirname, '../docs/demo'),
       filename: '[name].js',
       libraryTarget: process.env.WEBPACK_LIBRARY_TARGET || 'umd',
       globalObject: 'this',
@@ -70,11 +56,7 @@ const makeConfig = () => {
         {
           test: /\.(scss|sass|css)$/,
           use: [
-            !isDev
-              ? {
-                  loader: MiniCssExtractPlugin.loader,
-                }
-              : 'style-loader',
+            'style-loader',
             'css-loader',
             { loader: 'postcss-loader', options: postcssConfig },
             'sass-loader',
@@ -117,14 +99,6 @@ const makeConfig = () => {
     },
     mode: isDev ? 'development' : 'production',
   };
-
-  if (isDev) {
-    config.performance = {
-      hints: false,
-      maxEntrypointSize: 512000,
-      maxAssetSize: 512000,
-    };
-  }
 
   return config;
 };

@@ -1,5 +1,5 @@
 import './scss/main.scss';
-import './scss/demo.scss';
+import './scss/demo-vanilla.scss';
 import { registerWebComponent } from '.';
 
 registerWebComponent();

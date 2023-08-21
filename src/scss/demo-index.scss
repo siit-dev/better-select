@@ -1,0 +1,38 @@
+$color-mode-type: media-query;
+@import "bootstrap/scss/bootstrap";
+
+body {
+  padding-block: 30px;
+}
+
+h2 {
+  margin: 40px 0 24px;
+  font-size: 28px;
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    right: 0;
+    height: 1px;
+    background: #ccc;
+  }
+}
+
+h3 {
+  font-size: 22px;
+  margin: 32px 0 16px;
+}
+
+table {
+  @extend .table;
+  @extend .table-striped;
+}
+
+code {
+  vertical-align: middle;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: var(--bs-secondary-bg);
+}

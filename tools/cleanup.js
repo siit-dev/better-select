@@ -24,6 +24,11 @@ const deleteFolderRecursive = path => {
 
 const folder = process.argv.slice(2)[0];
 
+if (folder == 'demo') {
+  deleteFolderRecursive(Path.join(__dirname, '../docs/demo'));
+  return;
+}
+
 if (folder) {
   deleteFolderRecursive(Path.join(__dirname, '../dist', folder));
 } else {

@@ -280,6 +280,7 @@ export default class BetterSelect {
         // Allow adding custom styles to the list element using the `data-style` attribute on the option in the original select.
         if (option.dataset.style) {
           listElement.style.cssText += option.dataset.style;
+          listElement.dataset.style = option.dataset.style;
         }
         listElement.append(element);
 
@@ -341,6 +342,10 @@ export default class BetterSelect {
     this.#selectedOptionIndex = this.#selectedOption
       ? this.#options.indexOf(this.#selectedOption)
       : null;
+
+    if (this.#triggerEl) {
+      this.#triggerEl.style.cssText = this.#selectedOption?.listElement.dataset.style || '';
+    }
 
     this.updateDrowdownSelection();
   }

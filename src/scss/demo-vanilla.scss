@@ -1,0 +1,59 @@
+@import 'normalize.css';
+
+.container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+fieldset {
+  border: 1px solid #e0e0e0;
+  background: #fefefe;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 20px;
+  margin: 30px 0;
+
+  h2 {
+    margin-top: 0;
+    font-size: 20px;
+  }
+
+  label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+
+  select, .better-select {
+    font-family: sans-serif;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+
+    > * {
+      flex: 1;
+    }
+  }
+}
+
+
+.custom-styles-wrapper {
+  .better-select__trigger {
+    span::before {
+      content: "o";
+      color: var(--color);
+      margin-right: 10px;
+    }
+  }
+  .better-select__dropdown-list {
+    li a::before {
+      content: "o";
+      color: var(--color);
+      margin-right: 10px;
+    }
+  }
+}

@@ -28,9 +28,7 @@ or
 yarn add @smartimpact-it/better-select
 ```
 
-## Usage
-
-### As web component
+## Usage as web component
 
 The simplest method is to use the web component.
 
@@ -53,7 +51,7 @@ import { registerWebComponent } from '@smartimpact-it/better-select';
 registerWebComponent();
 ```
 
-#### Attributes for the `better-select` web component
+### Attributes for the `better-select` web component
 
 The available options are:
 
@@ -83,7 +81,7 @@ Example:
 </better-select>
 ```
 
-### Without the web component
+## Usage without the web component
 
 ```js
 import BetterSelect from '@smartimpact-it/better-select';
@@ -100,7 +98,7 @@ registerForjQuery();
 $('select.my-select').betterSelect({...});
 ```
 
-#### Settings for the `BetterSelect` class and for the jQuery method
+### Settings for the `BetterSelect` class and for the jQuery method
 
 The available options for the BetterSelect class are:
 
@@ -159,6 +157,17 @@ The BetterSelect web component exposes the following methods and getters/setters
 - `getSettings(): BetterSelectSettings` - get the settings of the custom select
 - `get value(): string` - get the value of the select
 - `set value(value: string)` - set the value of the select
+
+## Styling
+
+The package offers an integration with Bootstrap 5, but it can be used with any other CSS framework or custom styles.
+
+Alternatively, we offer a minimal styling for the custom select, which can be imported like this:
+
+```scss
+/* stylelint-disable-next-line scss/at-import-partial-extension */
+@import '@smartimpact-it/better-select/src/scss/main.scss';
+```
 
 ## Integration with Bootstrap
 

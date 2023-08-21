@@ -13,23 +13,19 @@ const makeConfig = () => {
 
   plugins.push(
     new HtmlWebpackPlugin({
-      template: 'public/index.html',
+      template: 'public/demo-bootstrap.html',
     }),
-    // new HtmlWebpackTagsPlugin({
-    //   tags: ['demo.js', 'main.css', 'app.css'],
-    //   append: true,
-    // }),
   );
 
   const entries = {
     index: ['./src/index'],
-    demo: ['./src/demo', './src/scss/demo.scss'],
+    demo: ['./src/demo-bs'],
   };
 
   const config = {
     entry: entries,
     output: {
-      path: path.resolve(__dirname, '../docs/demo'),
+      path: path.resolve(__dirname, '../docs/demo/bootstrap'),
       filename: '[name].js',
       libraryTarget: process.env.WEBPACK_LIBRARY_TARGET || 'umd',
       globalObject: 'this',

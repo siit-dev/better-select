@@ -1,4 +1,5 @@
-$dropdown-link-hover-bg: #ccc;
+$dropdown-link-hover-bg: var(--bs-secondary-bg);
+$color-mode-type: media-query;
 
 @import "bootstrap/scss/bootstrap";
 
