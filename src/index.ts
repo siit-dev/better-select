@@ -23,6 +23,9 @@ declare global {
       instance: BetterSelect;
       isMobile: boolean;
     }>;
+    'betterSelect.destroy': CustomEvent<{
+      instance: BetterSelect;
+    }>;
   }
 }
 

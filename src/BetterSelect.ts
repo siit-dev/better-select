@@ -369,6 +369,7 @@ export default class BetterSelect {
    * destroy the custom select and put back the original element
    */
   destroy() {
+    this.#triggerEvent(`betterSelect.destroy`);
     this.#removeListeners();
 
     this.#element.style.cssText = this.#originalStyle || '';

@@ -116,6 +116,50 @@ The available options for the BetterSelect class are:
 | dropdownClass    | the class added to the dropdown element                                           | 'better-select\_\_dropdown' |
 | zIndex           | the z-index to be set on the custom select wrapper                                | decrementing from 100       |
 
+## Events
+
+There are multiple events dispatched by the better select elements:
+
+- `better-select:init` - dispatched when the better select is initialized
+- `better-select:open` (cancelable) - dispatched when the dropdown is opened
+- `better-select:close` (cancelable) - dispatched when the dropdown is closed
+- `better-select:change` - dispatched when the value of the select is changed
+- `better-select:destroy` - dispatched when the better select is destroyed
+- `better-select:mobileBreakpoint` - dispatched when the mobile media query matches/unmatches
+
+## Methods on the BetterSelect class
+
+The BetterSelect class exposes the following methods and getters/setters:
+
+- `updateUI()` - update the UI of the custom select
+- `refreshOptions()` - refresh the options in the dropdown
+- `destroy()` - destroy the custom select and put back the original element
+- `reInit()` - reinitialize the custom select
+- `toggle(newStatus?: boolean | null)` - toggle the dropdown status
+- `close()` - close the dropdown
+- `updateSettings(settings: Partial<BetterSelectSettings>)` - update the settings of the custom select
+- `get opened(): boolean` - get the status of the dropdown
+- `set opened(newStatus: boolean)` - set the status of the dropdown
+- `get settings(): BetterSelectSettings` - get the settings of the custom select
+- `set settings(settings: BetterSelectSettings)` - set the settings of the custom select
+- `get wrapperEl(): HTMLElement | null` - get the wrapper element
+- `get triggerEl(): HTMLAnchorElement | null` - get the trigger element
+- `get dropdownEl(): HTMLElement | null` - get the dropdown element
+- `get select(): HTMLSelectElement` - get the original select element
+- `get element(): HTMLSelectElement` - get the original select element
+- `get value(): string | number | null` - get the value of the select
+- `set value(value: string | number | null)` - set the value of the select
+- `isMobileAndNative(): boolean` - check if the current device is mobile and the native select is used
+
+## Methods on the BetterSelect Web Component
+
+The BetterSelect web component exposes the following methods and getters/setters:
+
+- `get betterSelect(): BetterSelect | null` - get the BetterSelect instance
+- `getSettings(): BetterSelectSettings` - get the settings of the custom select
+- `get value(): string` - get the value of the select
+- `set value(value: string)` - set the value of the select
+
 ## Integration with Bootstrap
 
 To setup the styling of the custom select, the package provides an "adapter" for Bootstrap 5, which uses the styles from the default select (for the closed state) and the dropdown (for the open state). This provides a good integration with the Bootstrap variables, so that you don't need to style everything again.
