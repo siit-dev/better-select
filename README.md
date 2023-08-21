@@ -8,6 +8,10 @@ Better Select is a minimal custom select, with the option to fallback to the nat
 
 The plugin doesn't require jQuery, but it also offers a jQuery adapter if needed.
 
+## Demo
+
+See the [demo page](https://siit-dev.github.io/better-select/) for a live demo.
+
 ## Instalation
 
 ### Installing through npm
