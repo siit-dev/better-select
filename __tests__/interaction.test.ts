@@ -321,3 +321,48 @@ it("doesn't allow to programmatically set a value that doesn't exist", () => {
   betterSelectInstance.value = '6';
   expect(betterSelectInstance.value).toBe('');
 });
+
+it('allows to prevent the dropdown from opening/closing on click', () => {
+  document.body.innerHTML = `
+    <select name="select" id="select1">
+      <option value="">Placeholder</option>
+      <option value="2">Option 2</option>
+      <option value="3" disabled>Option 3</option>
+      <option value="4">Option 4</option>
+      <option value="5">Option 5</option>
+    </select>
+  `;
+
+  select = document.querySelector('#select1');
+  betterSelectInstance = new BetterSelect(select);
+  betterSelect = select!.closest('.better-select');
+
+  let toPreventOpen = true;
+  betterSelect!.addEventListener('betterSelect.open', (event: CustomEvent) => {
+    if (toPreventOpen) {
+      event.preventDefault();
+    }
+  });
+
+  let toPreventClose = true;
+  betterSelect!.addEventListener('betterSelect.close', (event: CustomEvent) => {
+    if (toPreventClose) {
+      event.preventDefault();
+    }
+  });
+
+  betterSelectInstance.toggle(true);
+  expect(betterSelectInstance.opened).toBeFalsy();
+
+  toPreventOpen = false;
+  betterSelectInstance.toggle(true);
+  expect(betterSelectInstance.opened).toBeTruthy();
+
+  toPreventClose = true;
+  betterSelectInstance.toggle(false);
+  expect(betterSelectInstance.opened).toBeTruthy();
+
+  toPreventClose = false;
+  betterSelectInstance.toggle(false);
+  expect(betterSelectInstance.opened).toBeFalsy();
+});

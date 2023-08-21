@@ -717,7 +717,7 @@ export default class BetterSelect {
   };
 
   #selectRelative = (offset: number) => {
-    const currentIndex = this.#selectedOptionIndex || 0;
+    const currentIndex = this.#selectedOptionIndex ?? (offset > 0 ? -1 : 0);
     const nextIndex = Math.max(Math.min(offset + currentIndex, this.#options.length - 1), 0);
     const next = this.#options[nextIndex];
     this.#select(this.#findNextEnabledOption(next, offset < 0));

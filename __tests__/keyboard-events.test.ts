@@ -429,3 +429,44 @@ it('handles select fields with no enabled options', () => {
   expect(betterSelectInstance.value).toBe('');
   expect(select!.value).toBe('');
 });
+
+it("correctly goes to the next option when placeholder is selected and there's no selected option", () => {
+  document.body.innerHTML = `
+    <select name="select" id="select1">
+      <option value="" selected disabled>Placeholder</option>
+      <option value="1">Option 1</option>
+      <option value="2">Option 2</option>
+      <option value="3" >Option 3</option>
+      <option value="4" disabled>Option 4</option>
+      <option value="5">Option 5</option>
+      <option value="6">Option 6</option>
+      <option value="7">Option 7</option>
+      <option value="8" disabled>Option 8</option>
+      <option value="9">Option 9</option>
+      <option value="10">Option 10</option>
+    </select>
+  `;
+
+  select = document.querySelector('#select1');
+  betterSelectInstance = new BetterSelect(select);
+  betterSelect = select?.closest('.better-select') || null;
+  expect(betterSelectInstance.value).toBe('');
+
+  betterSelectInstance!.toggle(true);
+  pressKey('ArrowDown');
+  expect(getTemporarilySelectedOptionValue()).toBe('1');
+
+  betterSelectInstance!.toggle(false);
+  betterSelectInstance.value = '';
+  expect(betterSelectInstance.value).toBe('');
+  pressKey('ArrowDown');
+  expect(getValue()).toBe('1');
+
+  betterSelectInstance.value = '';
+  betterSelectInstance!.toggle(true);
+  pressKey('ArrowUp');
+  expect(getTemporarilySelectedOptionValue()).toBe('1');
+  betterSelectInstance!.toggle(false);
+  pressKey('ArrowUp');
+  expect(getValue()).toBe('1');
+});
