@@ -2,8 +2,12 @@
 
 import '../__mocks__/stubs.mock';
 
+import { it, expect, beforeAll } from '@jest/globals';
+
 import BetterSelect from '../src/index';
-let betterSelect, select, betterSelectInstance;
+let betterSelect: HTMLDivElement | null = null,
+  select: HTMLSelectElement | null = null,
+  betterSelectInstance: BetterSelect | null = null;
 
 beforeAll(() => {
   const { registerWebComponent } = require('../src/index');
@@ -22,11 +26,11 @@ it('parses the placeholder from an empty option', () => {
     </select>
   `;
 
-  select = document.querySelector('#select1');
+  select = document.querySelector<HTMLSelectElement>('#select1')!;
   betterSelectInstance = new BetterSelect(select);
-  betterSelect = select.closest('.better-select');
+  betterSelect = select.closest('.better-select')!;
 
-  const trigger = betterSelect.querySelector('.better-select__trigger');
+  const trigger = betterSelect.querySelector('.better-select__trigger')!;
   expect(trigger.textContent).toBe('Select an option');
   expect(trigger.classList.contains('has-selected')).toBe(false);
 });
@@ -43,14 +47,14 @@ it('parses the placeholder from the placeholder setting', () => {
     </select>
   `;
 
-  select = document.querySelector('#select1');
+  select = document.querySelector<HTMLSelectElement>('#select1')!;
   const placeholder = 'Please select an option';
   betterSelectInstance = new BetterSelect(select, {
     placeholder,
   });
-  betterSelect = select.closest('.better-select');
+  betterSelect = select.closest('.better-select')!;
 
-  const trigger = betterSelect.querySelector('.better-select__trigger');
+  const trigger = betterSelect.querySelector('.better-select__trigger')!;
   expect(trigger.textContent).toBe(placeholder);
   expect(trigger.classList.contains('has-selected')).toBe(false);
 });
@@ -71,10 +75,10 @@ it('parses the placeholder from the placeholder setting when using web component
     </better-select>
   `;
 
-  select = document.querySelector('#select-placeholder');
-  betterSelect = select.closest('.better-select');
+  select = document.querySelector<HTMLSelectElement>('#select-placeholder')!;
+  betterSelect = select.closest('.better-select')!;
 
-  const trigger = betterSelect.querySelector('.better-select__trigger');
+  const trigger = betterSelect.querySelector('.better-select__trigger')!;
   expect(trigger.textContent).toBe(placeholder);
   expect(trigger.classList.contains('has-selected')).toBe(false);
 });
@@ -91,16 +95,18 @@ it('keeps a fixed placeholder', () => {
     </select>
   `;
 
-  select = document.querySelector('#select1');
+  select = document.querySelector<HTMLSelectElement>('#select1')!;
   const placeholder = 'Please select an option';
   betterSelectInstance = new BetterSelect(select, {
     placeholder,
     fixedPlaceholder: true,
   });
-  betterSelect = select.closest('.better-select');
+  betterSelect = select.closest('.better-select')!;
 
-  const trigger = betterSelect.querySelector(`.better-select__trigger`);
-  const option5 = betterSelect.querySelector(`.better-select__dropdown-list li a[data-value="5"]`);
+  const trigger = betterSelect.querySelector(`.better-select__trigger`)!;
+  const option5 = betterSelect.querySelector<HTMLAnchorElement>(
+    `.better-select__dropdown-list li a[data-value="5"]`,
+  )!;
   option5.click();
   expect(trigger.textContent).toBe(placeholder);
   expect(select.value).toBe('5');

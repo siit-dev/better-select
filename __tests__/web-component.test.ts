@@ -1,12 +1,10 @@
 'use strict';
 
+import { it, expect, beforeAll, test } from '@jest/globals';
 import { getElementInternals } from '../__mocks__/ElementInternals.mock';
 import '../__mocks__/stubs.mock';
-const {
-  registerWebComponent,
-  BetterSelectComponent,
-  defaultBetterSelectSettings,
-} = require('../src/index');
+import { BetterSelectComponent } from '../src';
+import { registerWebComponent, defaultBetterSelectSettings } from '../src';
 
 beforeAll(() => {
   registerWebComponent();
@@ -25,9 +23,9 @@ it('initializes a better select instance using web components', () => {
     </better-select>
   `;
 
-  const betterSelect = document.querySelector('better-select');
+  const betterSelect = document.querySelector('better-select')!;
   expect(betterSelect).toBeInstanceOf(BetterSelectComponent);
-  expect(betterSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+  expect(betterSelect.querySelector('select')!.dataset.betterSelectInit).toBe('true');
 });
 
 it('allows getting and setting a value', () => {
@@ -43,11 +41,11 @@ it('allows getting and setting a value', () => {
     </better-select>
   `;
 
-  const betterSelect = document.querySelector('better-select');
+  const betterSelect = document.querySelector<BetterSelectComponent>('better-select')!;
 
   betterSelect.value = '1';
   expect(betterSelect.value).toBe('1');
-  expect(betterSelect.betterSelect.value).toBe('1');
+  expect(betterSelect.betterSelect!.value).toBe('1');
 });
 
 it('reinitializes the better select instance when running update', () => {
@@ -63,12 +61,12 @@ it('reinitializes the better select instance when running update', () => {
     </better-select>
   `;
 
-  const betterSelect = document.querySelector('better-select');
+  const betterSelect = document.querySelector<BetterSelectComponent>('better-select')!;
   const firstInstance = betterSelect.betterSelect;
   expect(betterSelect).toBeInstanceOf(BetterSelectComponent);
-  expect(betterSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+  expect(betterSelect.querySelector('select')!.dataset.betterSelectInit).toBe('true');
   betterSelect.update();
-  expect(betterSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+  expect(betterSelect.querySelector('select')!.dataset.betterSelectInit).toBe('true');
   expect(firstInstance).not.toBe(betterSelect.betterSelect);
 });
 
@@ -79,7 +77,7 @@ it("doesn't initialize a better select instance if no select is present", () => 
     </better-select>
   `;
 
-  const betterSelect = document.querySelector('better-select');
+  const betterSelect = document.querySelector<BetterSelectComponent>('better-select')!;
   expect(betterSelect).toBeInstanceOf(BetterSelectComponent);
   expect(betterSelect.querySelector('select')).toBeNull();
   expect(betterSelect.betterSelect).toBeNull();
@@ -98,8 +96,8 @@ it('updates the better select instance if attributes change', () => {
     </better-select>
   `;
 
-  const betterSelect = document.querySelector('better-select');
-  const instance = betterSelect.betterSelect;
+  const betterSelect = document.querySelector<BetterSelectComponent>('better-select')!;
+  const instance = betterSelect.betterSelect!;
   expect(betterSelect).toBeInstanceOf(BetterSelectComponent);
 
   // Check the placeholder.
@@ -176,7 +174,7 @@ it('updates the better select instance if attributes change', () => {
 
   // Check that it doesn't update if the attribute is not valid.
   betterSelect.setAttribute('invalid-attribute', 'test-class');
-  expect(instance.settings.invalidAttribute).toBeUndefined();
+  expect((instance.settings as any).invalidAttribute).toBeUndefined();
 
   // Check that it doesn't update if the attribute has the same value.
   let initCount = 0;
@@ -206,9 +204,9 @@ test('dynamically adding a new web component element initializes it', () => {
     </better-select>
   `;
 
-  const betterSelect = document.querySelector('better-select');
+  const betterSelect = document.querySelector<BetterSelectComponent>('better-select')!;
   expect(betterSelect).toBeInstanceOf(BetterSelectComponent);
-  expect(betterSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+  expect(betterSelect.querySelector('select')!.dataset.betterSelectInit).toBe('true');
 
   const newSelect = document.createElement('better-select');
   newSelect.innerHTML = `
@@ -219,7 +217,7 @@ test('dynamically adding a new web component element initializes it', () => {
   document.body.appendChild(newSelect);
 
   expect(newSelect).toBeInstanceOf(BetterSelectComponent);
-  expect(newSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+  expect(newSelect.querySelector('select')!.dataset.betterSelectInit).toBe('true');
 });
 
 test('moving a web component element reinitializes it', () => {
@@ -235,9 +233,9 @@ test('moving a web component element reinitializes it', () => {
     </better-select>
   `;
 
-  const betterSelect = document.querySelector('better-select');
+  const betterSelect = document.querySelector<BetterSelectComponent>('better-select')!;
   expect(betterSelect).toBeInstanceOf(BetterSelectComponent);
-  expect(betterSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+  expect(betterSelect.querySelector('select')!.dataset.betterSelectInit).toBe('true');
   const firstInstance = betterSelect.betterSelect;
 
   // Create, append, and move the element.
@@ -246,7 +244,7 @@ test('moving a web component element reinitializes it', () => {
   newDiv.appendChild(betterSelect);
   const secondInstance = betterSelect.betterSelect;
   expect(secondInstance).not.toBe(firstInstance);
-  expect(betterSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+  expect(betterSelect.querySelector('select')!.dataset.betterSelectInit).toBe('true');
 
   // Create, move and append the element.
   const thirdDiv = document.createElement('div');
@@ -254,7 +252,7 @@ test('moving a web component element reinitializes it', () => {
   document.body.appendChild(thirdDiv);
   const thirdInstance = betterSelect.betterSelect;
   expect(thirdInstance).not.toBe(firstInstance);
-  expect(betterSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+  expect(betterSelect.querySelector('select')!.dataset.betterSelectInit).toBe('true');
 });
 
 test('it updates the ElementInternals when the value changes', async () => {
@@ -273,11 +271,11 @@ test('it updates the ElementInternals when the value changes', async () => {
     </form>
   `;
 
-  const betterSelect = document.querySelector('better-select');
+  const betterSelect = document.querySelector<BetterSelectComponent>('better-select')!;
   expect(betterSelect).toBeInstanceOf(BetterSelectComponent);
-  expect(betterSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+  expect(betterSelect.querySelector('select')!.dataset.betterSelectInit).toBe('true');
   expect(betterSelect.attachInternals).toBeDefined();
-  expect(betterSelect.constructor.formAssociated).toBe(true);
+  expect((betterSelect.constructor as typeof BetterSelectComponent).formAssociated).toBe(true);
 
   const internals = getElementInternals(betterSelect);
   expect(internals).not.toBeNull();
@@ -298,7 +296,7 @@ test('it updates the ElementInternals when the value changes', async () => {
     valueMissing: true,
   });
 
-  betterSelect.betterSelect.value = '1';
+  betterSelect.betterSelect!.value = '1';
   expect(internals.getFormValue()).toBe('1');
   expect(internals.checkValidity()).toBe(true);
   expect(internals.validationMessage).toBeFalsy();
@@ -316,7 +314,7 @@ test('it updates the ElementInternals when the value changes', async () => {
     valueMissing: false,
   });
 
-  const form = document.querySelector('form');
+  const form = document.querySelector('form')!;
   form.reset();
   await new Promise(resolve => setTimeout(resolve, 10));
 
@@ -326,7 +324,7 @@ test('it updates the ElementInternals when the value changes', async () => {
 
 test("it doesn't fail if the browser doesn't support ElementInternals", () => {
   const originalAttachInternals = HTMLElement.prototype.attachInternals;
-  HTMLElement.prototype.attachInternals = undefined;
+  (HTMLElement.prototype as any).attachInternals = undefined;
 
   document.body.innerHTML = `
     <better-select>
@@ -341,12 +339,12 @@ test("it doesn't fail if the browser doesn't support ElementInternals", () => {
     </better-select>
   `;
 
-  const betterSelect = document.querySelector('better-select');
+  const betterSelect = document.querySelector<BetterSelectComponent>('better-select')!;
   expect(betterSelect).toBeInstanceOf(BetterSelectComponent);
-  expect(betterSelect.querySelector('select').dataset.betterSelectInit).toBe('true');
+  expect(betterSelect.querySelector('select')!.dataset.betterSelectInit).toBe('true');
   expect(betterSelect.attachInternals).toBeUndefined();
-  betterSelect.betterSelect.value = '1';
-  expect(betterSelect.betterSelect.value).toBe('1');
+  betterSelect.betterSelect!.value = '1';
+  expect(betterSelect.betterSelect!.value).toBe('1');
   betterSelect._updateInternals();
 
   const internals = getElementInternals(betterSelect);
