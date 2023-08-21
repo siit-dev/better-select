@@ -52,6 +52,7 @@
     "build:esm": "node tools/cleanup esm && tsc -p config/tsconfig.esm.json && babel ./dist/esm -d ./dist/esm --config-file ./config/babel.config.esm.js",
     "build:umd": "node tools/cleanup umd && webpack --config config/webpack.config.js",
     "build:types": "node tools/cleanup types && copyfiles -u 1 \"src/**/*.d.ts\" dist/types && tsc -p config/tsconfig.types.json",
+    "build:demo": "webpack --config config/webpack.demo.config.js",
     "test": "jest --config jestconfig.json --passWithNoTests",
     "test:coverage": "jest --config jestconfig.json --coverage",
     "test:coverage:ci": "jest --config jestconfig.json --coverage --coverageReporters=\"json-summary\" --coverageDirectory=\"./coverage\"",
