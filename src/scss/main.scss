@@ -132,7 +132,7 @@ $white: #fff !default;
         padding-left: 0;
         margin: 0;
 
-        a {
+        span {
           display: block;
           color: inherit;
           transition: var(--better-select-dropdown-item-transition);
@@ -140,12 +140,13 @@ $white: #fff !default;
           font-size: var(--better-select-dropdown-item-font-size);
           border: none;
           text-decoration: none;
+          cursor: pointer;
         }
       }
 
       li {
         &.is-active {
-          a {
+          span {
             background: var(--better-select-dropdown-item-active-background);
             color: var(--better-select-dropdown-item-active-color);
           }
@@ -153,7 +154,7 @@ $white: #fff !default;
 
         &:hover,
         &.is-active.is-temporary-selection {
-          a {
+          span {
             color: var(--better-select-dropdown-item-hover-color);
             background-color: var(--better-select-dropdown-item-hover-background);
           }

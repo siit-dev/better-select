@@ -8,7 +8,7 @@ export interface BetterSelectAnchorOption {
   originalOption: HTMLOptionElement;
   value: string;
   label: string;
-  element: HTMLAnchorElement;
+  element: HTMLSpanElement;
   listElement: HTMLLIElement;
   isActive: boolean;
   disabled: boolean;
@@ -45,7 +45,7 @@ export const defaultBetterSelectSettings = {
 export default class BetterSelect {
   #element: HTMLSelectElement;
   #wrapperEl: HTMLElement | null = null;
-  #triggerEl: HTMLAnchorElement | null = null;
+  #triggerEl: HTMLSpanElement | null = null;
   #triggerTitleEl: HTMLElement | null = null;
   #dropdownEl: HTMLElement | null = null;
   #dropdownListEl: HTMLUListElement | null = null;
@@ -199,9 +199,8 @@ export default class BetterSelect {
    */
   #createUI() {
     // create the trigger
-    this.#triggerEl = document.createElement('a');
+    this.#triggerEl = document.createElement('span');
     this.#triggerEl.style.display = 'block';
-    this.#triggerEl.href = '#';
     this.#triggerEl.tabIndex = 0;
     this.#triggerEl.className = this.#triggerClass;
     this.#triggerTitleEl = document.createElement('span');
@@ -267,8 +266,7 @@ export default class BetterSelect {
         }
 
         // create the dropdownEl element
-        const element = document.createElement('a');
-        element.href = '#';
+        const element = document.createElement('span');
         element.dataset.value = option.value;
         element.innerHTML = option.text.length ? option.text : option.value;
 
@@ -473,6 +471,8 @@ export default class BetterSelect {
     // Switch focus to the trigger when focusing the custom select.
     this.#element.addEventListener('focus', this.#onNativeSelectFocus.bind(this));
 
+    document.addEventListener('focus', this.#onDocumentFocus.bind(this), true);
+
     // open the dropdown on click on the trigger
     this.#triggerEl?.addEventListener('click', this.#onTriggerClick.bind(this));
 
@@ -505,6 +505,8 @@ export default class BetterSelect {
 
     this.#element.removeEventListener('focus', this.#onNativeSelectFocus.bind(this));
 
+    document.removeEventListener('focus', this.#onDocumentFocus.bind(this), true);
+
     this.#triggerEl?.removeEventListener('click', this.#onTriggerClick.bind(this));
     document.body.removeEventListener('click', this.#onOutsideClick.bind(this));
     this.#wrapperEl?.removeEventListener('click', this.#onWrapperClick.bind(this));
@@ -528,7 +530,7 @@ export default class BetterSelect {
       return;
     }
 
-    const item = (e.target as HTMLElement).closest('a');
+    const item = (e.target as HTMLElement).closest('span');
     if (this.#dropdownEl.contains(item)) {
       e.preventDefault();
 
@@ -562,6 +564,13 @@ export default class BetterSelect {
   #onNativeSelectFocus() {
     if (!this.#isMobileAndNative) {
       this.#triggerEl?.focus();
+    }
+  }
+
+  #onDocumentFocus(e: FocusEvent) {
+    // Close the dropdown if the focus is outside the custom select.
+    if (!this.#wrapperEl?.contains(e.target as HTMLElement)) {
+      this.close();
     }
   }
 
