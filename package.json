@@ -32,10 +32,20 @@
       "require": "./dist/registerWebComponent.cjs",
       "types": "./dist/registerWebComponent.d.ts"
     },
+    "./autoRegisterWebComponent": {
+      "import": "./dist/autoRegisterWebComponent.mjs",
+      "require": "./dist/autoRegisterWebComponent.cjs",
+      "types": "./dist/autoRegisterWebComponent.d.ts"
+    },
     "./registerForJquery": {
       "import": "./dist/registerForJquery.mjs",
       "require": "./dist/registerForJquery.cjs",
       "types": "./dist/registerForJquery.d.ts"
+    },
+    "./autoRegisterForJquery": {
+      "import": "./dist/autoRegisterForJquery.mjs",
+      "require": "./dist/autoRegisterForJquery.cjs",
+      "types": "./dist/autoRegisterForJquery.d.ts"
     },
     "./dist/*": "./dist/*",
     "./src/*": "./src/*",
