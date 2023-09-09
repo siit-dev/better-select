@@ -15,4 +15,4 @@ const plugins = [
   'lodash',
 ];
 
-module.exports = { plugins, presets };
+export default { presets, plugins };

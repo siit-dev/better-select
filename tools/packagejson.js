@@ -3,12 +3,10 @@
  * licence: MIT
  */
 
-/* eslint-disable */
-const fs = require('fs');
-const Path = require('path');
-const fileName = '../package.json';
-const file = require(fileName);
-/* eslint-enable */
+import fs from 'fs';
+import Path from 'path';
+import file from '../package.json';
+const __dirname = Path.dirname(new URL(import.meta.url).pathname);
 
 const args = process.argv.slice(2);
 

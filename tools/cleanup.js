@@ -3,10 +3,8 @@
  * licence: MIT
  */
 
-/* eslint-disable */
-const fs = require('fs');
-const Path = require('path');
-/* eslint-enable */
+import fs from 'fs';
+import Path from 'path';
 
 const deleteFolderRecursive = path => {
   if (fs.existsSync(path)) {
@@ -23,16 +21,17 @@ const deleteFolderRecursive = path => {
 };
 
 const folder = process.argv.slice(2)[0];
+const dirname = Path.dirname(new URL(import.meta.url).pathname);
 
 if (folder == 'demo') {
-  deleteFolderRecursive(Path.join(__dirname, '../docs/demo'));
-  return;
+  deleteFolderRecursive(Path.join(dirname, '../docs/demo'));
+  process.exit(0);
 }
 
 if (folder) {
-  deleteFolderRecursive(Path.join(__dirname, '../dist', folder));
+  deleteFolderRecursive(Path.join(dirname, '../dist', folder));
 } else {
-  deleteFolderRecursive(Path.join(__dirname, '../dist/esm'));
-  deleteFolderRecursive(Path.join(__dirname, '../dist/umd'));
-  deleteFolderRecursive(Path.join(__dirname, '../dist/types'));
+  deleteFolderRecursive(Path.join(dirname, '../dist/esm'));
+  deleteFolderRecursive(Path.join(dirname, '../dist/umd'));
+  deleteFolderRecursive(Path.join(dirname, '../dist/types'));
 }

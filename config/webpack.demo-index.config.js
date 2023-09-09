@@ -1,12 +1,12 @@
-const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
-const postcssConfig = require('./postcss.config');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const babelConfig = require('../babel.config');
-const webpack = require('webpack');
-const marked = require('marked');
-const fs = require('fs');
+import path from 'path';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import postcssConfig from '../postcss.config.js';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import babelConfig from '../babel.config.js';
+import webpack from 'webpack';
+import { marked } from 'marked';
+import fs from 'fs';
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 const makeConfig = () => {
   const isDev = process.env.NODE_ENV === 'development';
@@ -103,4 +103,5 @@ const makeConfig = () => {
   return config;
 };
 
-module.exports = makeConfig();
+const config = makeConfig();
+export default config;

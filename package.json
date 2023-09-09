@@ -2,44 +2,55 @@
   "name": "@smartimpact-it/better-select",
   "version": "1.1.9",
   "description": "Web component for a better select",
-  "main": "dist/umd/index.js",
-  "es2015": "dist/esm/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/types/index.d.ts",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "src/**/*",
+    "utils/**/*"
+  ],
   "exports": {
     ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/umd/index.js"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
     },
     "./BetterSelect": {
-      "import": "./dist/esm/BetterSelect.js"
+      "import": "./dist/BetterSelect.mjs",
+      "require": "./dist/BetterSelect.cjs",
+      "types": "./dist/BetterSelect.d.ts"
     },
     "./WebComponent": {
-      "import": "./dist/esm/WebComponent.js"
+      "import": "./dist/WebComponent.mjs",
+      "require": "./dist/WebComponent.cjs",
+      "types": "./dist/WebComponent.d.ts"
     },
     "./registerWebComponent": {
-      "import": "./dist/esm/registerWebComponent.js"
+      "import": "./dist/registerWebComponent.mjs",
+      "require": "./dist/registerWebComponent.cjs",
+      "types": "./dist/registerWebComponent.d.ts"
     },
     "./registerForJquery": {
-      "import": "./dist/esm/registerForJquery.js"
+      "import": "./dist/registerForJquery.mjs",
+      "require": "./dist/registerForJquery.cjs",
+      "types": "./dist/registerForJquery.d.ts"
     },
-    "./bootstrap.scss": {
+    "./dist/*": "./dist/*",
+    "./src/*": "./src/*",
+    "./css/*": "./dist/css/*",
+    "./scss/bootstrap": {
       "style": "./src/scss/bootstrap.scss",
       "import": "./src/scss/bootstrap.scss",
       "require": "./src/scss/bootstrap.scss"
     },
-    "./bootstrap": {
+    "./scss/bootstrap.scss": {
       "style": "./src/scss/bootstrap.scss",
       "import": "./src/scss/bootstrap.scss",
       "require": "./src/scss/bootstrap.scss"
     },
-    "./dist/": "./dist/",
-    "./src/": "./src/",
-    "./esm/": "./dist/esm/",
-    "./css/": "./dist/css/",
-    "./umd/": "./dist/umd/",
-    "./types/": "./dist/types/",
-    "./main.css": {
+    "./scss/main.css": {
       "style": "./dist/css/main.css",
       "import": "./dist/css/main.css",
       "require": "./dist/css/main.css"
@@ -51,10 +62,7 @@
     "start:demo:bs": "cross-env NODE_ENV=development webpack serve --open --config config/webpack.demo-bs.config.js",
     "start:demo:vanilla": "cross-env NODE_ENV=development webpack serve --open --config config/webpack.demo-vanilla.config.js",
     "start:demo:index": "cross-env NODE_ENV=development webpack serve --open --config config/webpack.demo-index.config.js",
-    "build": "npm run build:umd && npm run build:esm && npm run build:types",
-    "build:esm": "node tools/cleanup esm && tsc -p config/tsconfig.esm.json && babel ./dist/esm -d ./dist/esm --config-file ./config/babel.config.esm.js",
-    "build:umd": "node tools/cleanup umd && webpack --config config/webpack.config.js",
-    "build:types": "node tools/cleanup types && copyfiles -u 1 \"src/**/*.d.ts\" dist/types && tsc -p config/tsconfig.types.json",
+    "build": "unbuild",
     "build:demo": "node tools/cleanup demo && webpack --config config/webpack.demo-index.config.js && webpack --config config/webpack.demo-bs.config.js && webpack --config config/webpack.demo-vanilla.config.js",
     "test": "jest --config jestconfig.json --passWithNoTests",
     "test:coverage": "jest --config jestconfig.json --coverage",
@@ -63,6 +71,7 @@
     "format:check": "prettier --list-different \"src/**/**.{js,ts}\" \"**/*.md\"",
     "pretest-disabled": "npm run build",
     "lint": "tslint -p tsconfig.json",
+    "publint": "npx publint",
     "preversion": "npm run lint",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
@@ -76,11 +85,6 @@
   "directories": {
     "lib": "dist"
   },
-  "files": [
-    "dist/**/*",
-    "src/**/*",
-    "utils/**/*"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/siit-dev/better-select.git"
@@ -107,51 +111,53 @@
   },
   "homepage": "https://github.com/siit-dev/better-select#readme",
   "devDependencies": {
-    "@babel/cli": "^7.21.0",
-    "@babel/core": "^7.21.4",
-    "@babel/helpers": "^7.21.0",
-    "@babel/plugin-proposal-decorators": "^7.21.0",
+    "@babel/cli": "^7.22.15",
+    "@babel/core": "^7.22.17",
+    "@babel/helpers": "^7.22.15",
+    "@babel/plugin-proposal-decorators": "^7.22.15",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
-    "@babel/plugin-transform-async-to-generator": "^7.20.7",
-    "@babel/plugin-transform-react-jsx": "^7.21.0",
-    "@babel/plugin-transform-runtime": "^7.21.4",
-    "@babel/preset-env": "^7.21.4",
-    "@babel/preset-typescript": "^7.21.4",
-    "@babel/register": "^7.21.0",
+    "@babel/plugin-transform-async-to-generator": "^7.22.5",
+    "@babel/plugin-transform-react-jsx": "^7.22.15",
+    "@babel/plugin-transform-runtime": "^7.22.15",
+    "@babel/preset-env": "^7.22.15",
+    "@babel/preset-typescript": "^7.22.15",
+    "@babel/register": "^7.22.15",
     "@types/bootstrap": "^5.2.6",
-    "@types/jest": "^29.4.0",
-    "@types/jquery": "^3.5.16",
-    "autoprefixer": "^10.4.14",
-    "babel-jest": "^29.5.0",
-    "babel-loader": "^9.1.2",
+    "@types/jest": "^29.5.4",
+    "@types/jquery": "^3.5.18",
+    "autoprefixer": "^10.4.15",
+    "babel-jest": "^29.6.4",
+    "babel-loader": "^9.1.3",
     "babel-plugin-lodash": "^3.3.4",
     "bootstrap": "^5.3.1",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
-    "css-loader": "^6.7.3",
+    "css-loader": "^6.8.1",
     "file-loader": "^6.2.0",
-    "html-webpack-plugin": "^5.5.0",
+    "html-webpack-plugin": "^5.5.3",
     "html-webpack-tags-plugin": "^3.0.2",
-    "jest": "^29.5.0",
-    "jest-environment-jsdom": "^29.5.0",
-    "jquery": "^3.7.0",
-    "marked": "^7.0.4",
-    "mini-css-extract-plugin": "^2.7.5",
+    "jest": "^29.6.4",
+    "jest-environment-jsdom": "^29.6.4",
+    "jquery": "^3.7.1",
+    "marked": "^8.0.1",
+    "mini-css-extract-plugin": "^2.7.6",
     "normalize.css": "^8.0.1",
-    "postcss": "^8.4.21",
-    "postcss-loader": "^7.2.4",
+    "postcss": "^8.4.29",
+    "postcss-loader": "^7.3.3",
     "prettier": "^2.8.7",
-    "sass": "^1.55.0",
-    "sass-loader": "^13.2.2",
-    "style-loader": "^3.3.2",
-    "ts-jest": "^29.0.5",
+    "rollup-plugin-scss": "^4.0.0",
+    "sass": "^1.66.1",
+    "sass-loader": "^13.3.2",
+    "style-loader": "^3.3.3",
+    "ts-jest": "^29.1.1",
     "tslint": "^6.1.3",
     "tslint-config-prettier": "^1.18.0",
-    "typedoc": "^0.24.6",
-    "typescript": "^5.0.4",
-    "webpack": "^5.79.0",
-    "webpack-cli": "^5.0.1",
-    "webpack-dev-server": "^4.13.2",
+    "typedoc": "^0.25.1",
+    "typescript": "^5.1.6",
+    "unbuild": "^2.0.0",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1",
     "webpack-notifier": "^1.15.0"
   },
   "jest": {
