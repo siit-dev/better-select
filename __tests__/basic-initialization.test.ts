@@ -157,7 +157,7 @@ test('dynamically adding new options to the select updates the better select ins
     betterSelect.querySelector('.better-select__dropdown-list')!.querySelectorAll('li').length,
   ).toBe(6);
   expect(
-    betterSelect.querySelector('.better-select__dropdown-list a[data-value="6"]')?.textContent,
+    betterSelect.querySelector('.better-select__dropdown-list [data-value="6"]')?.textContent,
   ).toBe('Option 6');
 });
 

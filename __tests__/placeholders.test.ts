@@ -104,8 +104,8 @@ it('keeps a fixed placeholder', () => {
   betterSelect = select.closest('.better-select')!;
 
   const trigger = betterSelect.querySelector(`.better-select__trigger`)!;
-  const option5 = betterSelect.querySelector<HTMLAnchorElement>(
-    `.better-select__dropdown-list li a[data-value="5"]`,
+  const option5 = betterSelect.querySelector<HTMLElement>(
+    `.better-select__dropdown-list li [data-value="5"]`,
   )!;
   option5.click();
   expect(trigger.textContent).toBe(placeholder);

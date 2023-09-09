@@ -10,7 +10,7 @@ let betterSelect: HTMLDivElement | null = null,
 
 const selectOption = (value: string | number) => {
   betterSelect
-    ?.querySelector<HTMLAnchorElement>(`.better-select__dropdown-list a[data-value="${value}"]`)
+    ?.querySelector<HTMLAnchorElement>(`.better-select__dropdown-list [data-value="${value}"]`)
     ?.click();
 };
 const getSelectedOption = (): HTMLLIElement | null => {
@@ -20,7 +20,7 @@ const getSelectedOption = (): HTMLLIElement | null => {
 };
 
 const getSelectedOptionValue = (): string | null => {
-  return getSelectedOption()?.querySelector('a')?.dataset.value || null;
+  return getSelectedOption()?.querySelector<HTMLElement>('[data-value]')?.dataset.value || null;
 };
 const getTemporarilySelectedOption = (): HTMLLIElement | null => {
   return (
@@ -30,7 +30,10 @@ const getTemporarilySelectedOption = (): HTMLLIElement | null => {
   );
 };
 const getTemporarilySelectedOptionValue = (): string | null => {
-  return getTemporarilySelectedOption()?.querySelector('a')?.dataset.value || null;
+  return (
+    getTemporarilySelectedOption()?.querySelector<HTMLElement>('[data-value]')?.dataset.value ||
+    null
+  );
 };
 const getValue = (): string | null => {
   if (betterSelectInstance?.opened) {

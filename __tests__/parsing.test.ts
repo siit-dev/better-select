@@ -38,7 +38,7 @@ it('parses the options from the native select', () => {
   expect(options.length).toBe(nativeOptions.length);
   for (let i = 0; i < options.length; i++) {
     const option = options[i];
-    const optionAnchor = option.querySelector('a')!;
+    const optionAnchor = option.querySelector<HTMLElement>('[data-value]')!;
     const nativeOption = nativeOptions[i];
     expect(option.textContent).toBe(nativeOption.textContent);
     expect(optionAnchor.dataset.value).toBe(nativeOption.value);
@@ -53,7 +53,7 @@ it('parses the current active option', () => {
   const trigger = betterSelect!.querySelector('.better-select__trigger')!;
   expect(selectedOption.textContent).toBe(select!.options[select!.selectedIndex].textContent);
   expect(trigger.textContent).toBe(select!.options[select!.selectedIndex].textContent);
-  expect(selectedOption.querySelector('a')!.dataset.value).toBe(
+  expect(selectedOption.querySelector<HTMLElement>('[data-value]')!.dataset.value).toBe(
     select!.options[select!.selectedIndex].value,
   );
 });

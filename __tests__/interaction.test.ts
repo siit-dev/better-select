@@ -32,7 +32,7 @@ beforeEach(() => {
 
 const selectOption = (value: string | number) => {
   betterSelect
-    ?.querySelector<HTMLAnchorElement>(`.better-select__dropdown-list a[data-value="${value}"]`)
+    ?.querySelector<HTMLAnchorElement>(`.better-select__dropdown-list [data-value="${value}"]`)
     ?.click();
 };
 const getSelectedOption = (): HTMLElement | null => {
@@ -45,7 +45,7 @@ const getTrigger = (): HTMLElement | null => {
 it('selects a different option', () => {
   selectOption(2);
   const selected = getSelectedOption()!;
-  expect(selected.querySelector('a')!.dataset.value).toBe('2');
+  expect(selected.querySelector<HTMLElement>('span')!.dataset.value).toBe('2');
   const trigger = getTrigger()!;
   expect(trigger.textContent).toBe('Option 2');
   expect(trigger.classList.contains('has-selected')).toBeTruthy();
@@ -54,7 +54,7 @@ it('selects a different option', () => {
 it("doesn't select a disabled option", () => {
   selectOption(3);
   const selected = getSelectedOption()!;
-  expect(selected.querySelector('a')!.dataset.value).not.toBe('3');
+  expect(selected.querySelector<HTMLElement>('span')!.dataset.value).not.toBe('3');
   const trigger = getTrigger()!;
   expect(trigger.textContent).not.toBe('Option 3');
 });
@@ -75,7 +75,7 @@ it('uses the value instead of the text for an option without text', () => {
   betterSelect = select!.closest('.better-select');
   selectOption(1);
   const selected = getSelectedOption()!;
-  expect(selected.querySelector('a')!.dataset.value).toBe('1');
+  expect(selected.querySelector<HTMLElement>('[data-value]')!.dataset.value).toBe('1');
   const trigger = getTrigger()!;
   expect(trigger.textContent).toBe('1');
   expect(selected.textContent).toBe('1');
@@ -225,7 +225,7 @@ it("doesn't trigger the change event on clicking the placeholder", () => {
   const changeCallback = jest.fn();
   betterSelect!.addEventListener('change', changeCallback);
   const firstOption = betterSelect!.querySelector<HTMLAnchorElement>(
-    '.better-select__dropdown-list li:first-child a',
+    '.better-select__dropdown-list li:first-child span',
   )!;
   firstOption.click();
   expect(changeCallback).not.toHaveBeenCalled();
@@ -252,7 +252,7 @@ it("triggers the change event on clicking the placeholder if the 'alwaysTriggerC
   const changeCallback = jest.fn();
   betterSelect!.addEventListener('change', changeCallback);
   const firstOption = betterSelect!.querySelector<HTMLAnchorElement>(
-    '.better-select__dropdown-list li:first-child a',
+    '.better-select__dropdown-list li:first-child span',
   )!;
   firstOption.click();
   expect(changeCallback).toHaveBeenCalled();
