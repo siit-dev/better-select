@@ -21,7 +21,8 @@
     "noFallthroughCasesInSwitch": true,
     "allowJs": true,
 
-    "typeRoots": ["./node_modules/@types", "./src/types"]
+    "typeRoots": ["./node_modules/@types", "./src"],
+    "rootDirs": ["./src", "./dist"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"]

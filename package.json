@@ -3,76 +3,63 @@
   "version": "1.2.2",
   "description": "Web component for a better select",
   "type": "module",
-  "main": "dist/index.cjs",
+  "main": "dist/index.mjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist/**/*",
-    "src/**/*",
-    "utils/**/*"
+    "src/**/*"
   ],
   "sideEffects": [
+    "dist/index.mjs",
     "dist/autoRegisterForJquery.mjs",
-    "dist/autoRegisterForJquery.cjs",
     "dist/registerForJquery.mjs",
-    "dist/registerForJquery.cjs",
-    "dist/autoRegisterWebComponent.mjs",
-    "dist/autoRegisterWebComponent.cjs"
+    "dist/autoRegisterWebComponent.mjs"
   ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "module": "./dist/index.mjs",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.mjs"
     },
     "./BetterSelect": {
       "types": "./dist/BetterSelect.d.ts",
-      "import": "./dist/BetterSelect.mjs",
-      "require": "./dist/BetterSelect.cjs"
+      "import": "./dist/BetterSelect.mjs"
     },
     "./WebComponent": {
       "types": "./dist/WebComponent.d.ts",
-      "import": "./dist/WebComponent.mjs",
-      "require": "./dist/WebComponent.cjs"
+      "import": "./dist/WebComponent.mjs"
     },
     "./registerWebComponent": {
       "types": "./dist/registerWebComponent.d.ts",
-      "import": "./dist/registerWebComponent.mjs",
-      "require": "./dist/registerWebComponent.cjs"
+      "import": "./dist/registerWebComponent.mjs"
     },
     "./autoRegisterWebComponent": {
       "types": "./dist/autoRegisterWebComponent.d.ts",
-      "import": "./dist/autoRegisterWebComponent.mjs",
-      "require": "./dist/autoRegisterWebComponent.cjs"
+      "import": "./dist/autoRegisterWebComponent.mjs"
     },
     "./registerForJquery": {
       "types": "./dist/registerForJquery.d.ts",
-      "import": "./dist/registerForJquery.mjs",
-      "require": "./dist/registerForJquery.cjs"
+      "import": "./dist/registerForJquery.mjs"
     },
     "./autoRegisterForJquery": {
       "types": "./dist/autoRegisterForJquery.d.ts",
-      "import": "./dist/autoRegisterForJquery.mjs",
-      "require": "./dist/autoRegisterForJquery.cjs"
+      "import": "./dist/autoRegisterForJquery.mjs"
     },
     "./dist/*": "./dist/*",
     "./src/*": "./src/*",
     "./css/*": "./dist/css/*",
     "./scss/bootstrap": {
       "style": "./src/scss/bootstrap.scss",
-      "import": "./src/scss/bootstrap.scss",
-      "require": "./src/scss/bootstrap.scss"
+      "import": "./src/scss/bootstrap.scss"
     },
     "./scss/bootstrap.scss": {
       "style": "./src/scss/bootstrap.scss",
-      "import": "./src/scss/bootstrap.scss",
-      "require": "./src/scss/bootstrap.scss"
+      "import": "./src/scss/bootstrap.scss"
     },
     "./scss/main.css": {
       "style": "./dist/css/main.css",
-      "import": "./dist/css/main.css",
-      "require": "./dist/css/main.css"
+      "import": "./dist/css/main.css"
     }
   },
   "scripts": {
@@ -82,7 +69,6 @@
     "start:demo:vanilla": "cross-env NODE_ENV=development webpack serve --open --config config/webpack.demo-vanilla.config.js",
     "start:demo:index": "cross-env NODE_ENV=development webpack serve --open --config config/webpack.demo-index.config.js",
     "build": "unbuild",
-    "postbuild": "tsc --emitDeclarationOnly",
     "build:demo": "node tools/cleanup demo && webpack --config config/webpack.demo-index.config.js && webpack --config config/webpack.demo-bs.config.js && webpack --config config/webpack.demo-vanilla.config.js",
     "test": "jest --config jestconfig.json --passWithNoTests",
     "test:coverage": "jest --config jestconfig.json --coverage",

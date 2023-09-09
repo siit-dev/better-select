@@ -18,7 +18,6 @@ export default defineBuildConfig({
   declaration: true,
   externals: ['jquery'],
   rollup: {
-    emitCJS: true,
     output: {
       exports: 'named',
       globals: {
