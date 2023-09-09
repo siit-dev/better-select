@@ -298,6 +298,7 @@ export default class BetterSelect {
     // create the list
     const list = document.createElement('ul');
     list.classList.add('better-select__dropdown-list');
+    list.tabIndex = -1;
     this.#options.forEach(({ listElement }) => {
       list.append(listElement);
     });
