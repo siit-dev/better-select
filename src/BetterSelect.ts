@@ -532,14 +532,14 @@ export default class BetterSelect {
     if (this.#dropdownEl.contains(item)) {
       e.preventDefault();
 
-      const selected = this.#options.find(({ element }) => element == item);
+      const selected = this.#options.find(({ element }) => element === item);
       if (selected?.disabled) {
         return;
       }
 
       let shouldUpdate = true;
       if (!this.#alwaysTriggerChange) {
-        if (selected && selected.value == this.#element.value) {
+        if (selected && selected.value === this.#element.value) {
           shouldUpdate = false;
         } else if (!selected && !this.#element.value) {
           shouldUpdate = false;
@@ -667,7 +667,6 @@ export default class BetterSelect {
     }
 
     // Do nothing for other keys.
-    console.log('Unhandled key', e.key);
   }
 
   #findNextEnabledOption = (
@@ -683,7 +682,7 @@ export default class BetterSelect {
     }
 
     // Is there any enabled option??
-    if (this.#options.every(option => option.disabled)) {
+    if (this.#options.every(opt => opt.disabled)) {
       return null;
     }
 

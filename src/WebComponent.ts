@@ -204,7 +204,7 @@ export default class BetterSelectComponent extends HTMLElement {
         this.noNativeOnMobile = newValue !== null && newValue !== 'false';
         break;
       case 'mobile-breakpoint':
-        this.mobileBreakpoint = newValue ? parseInt(newValue) : 1024;
+        this.mobileBreakpoint = newValue ? parseInt(newValue, 10) : 1024;
         break;
       case 'wrapper-class':
         this.wrapperClass = newValue || defaultValues.wrapperClass;
@@ -216,7 +216,7 @@ export default class BetterSelectComponent extends HTMLElement {
         this.dropdownClass = newValue || defaultValues.dropdownClass;
         break;
       case 'z-index':
-        this.zIndex = newValue ? parseInt(newValue) : null;
+        this.zIndex = newValue ? parseInt(newValue, 10) : null;
         break;
     }
 

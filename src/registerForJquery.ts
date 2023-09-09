@@ -10,7 +10,7 @@ declare global {
 // register as a jQuery plugin, if jQuery is available
 export function registerForJquery() {
   if ('jQuery' in window) {
-    (function ($: JQueryStatic) {
+    (($: JQueryStatic) => {
       $.fn.betterSelect = function (
         this: JQuery<HTMLSelectElement>,
         settings: BetterSelectSettings = {},
