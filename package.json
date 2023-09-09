@@ -73,6 +73,7 @@
     "start:demo:vanilla": "cross-env NODE_ENV=development webpack serve --open --config config/webpack.demo-vanilla.config.js",
     "start:demo:index": "cross-env NODE_ENV=development webpack serve --open --config config/webpack.demo-index.config.js",
     "build": "unbuild",
+    "postbuild": "tsc --emitDeclarationOnly",
     "build:demo": "node tools/cleanup demo && webpack --config config/webpack.demo-index.config.js && webpack --config config/webpack.demo-bs.config.js && webpack --config config/webpack.demo-vanilla.config.js",
     "test": "jest --config jestconfig.json --passWithNoTests",
     "test:coverage": "jest --config jestconfig.json --coverage",

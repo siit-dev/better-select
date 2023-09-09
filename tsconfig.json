@@ -6,6 +6,9 @@
     "lib": ["ES2020", "dom", "dom.iterable"],
     "types": ["node"],
     "skipLibCheck": true,
+    "declaration": true,
+    "declarationDir": "./dist/",
+    "declarationMap": true,
     "outDir": "./dist/",
 
     "moduleResolution": "bundler",
