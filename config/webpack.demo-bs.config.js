@@ -8,17 +8,16 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const makeConfig = () => {
   const isDev = process.env.NODE_ENV === 'development';
 
-  const plugins = [new webpack.EnvironmentPlugin({ NODE_ENV: 'production' })];
-
-  plugins.push(
+  const plugins = [
+    new webpack.EnvironmentPlugin({ NODE_ENV: isDev ? 'development' : 'production' }),
     new HtmlWebpackPlugin({
       template: 'public/demo-bootstrap.html',
     }),
-  );
+  ];
 
   const entries = {
     index: ['./src/index'],
-    demo: ['./src/demo-bs'],
+    demo: ['./src/demo-bs', './src/scss/demo-bs.scss'],
   };
 
   const config = {

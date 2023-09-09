@@ -19,7 +19,7 @@ const makeConfig = () => {
 
   const entries = {
     index: ['./src/index'],
-    demo: ['./src/demo-vanilla'],
+    demo: ['./src/demo-vanilla', './src/scss/main.scss', './src/scss/demo-vanilla.scss'],
   };
 
   const config = {

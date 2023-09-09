@@ -166,7 +166,7 @@
     "postcss-loader": "^7.3.3",
     "prettier": "^2.8.7",
     "rollup-plugin-scss": "^4.0.0",
-    "sass": "^1.66.1",
+    "sass": "^1.55.0",
     "sass-loader": "^13.3.2",
     "style-loader": "^3.3.3",
     "ts-jest": "^29.1.1",
