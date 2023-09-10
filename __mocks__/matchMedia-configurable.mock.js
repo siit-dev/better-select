@@ -1,3 +1,5 @@
+import { jest } from '@jest/globals';
+
 let listeners = [];
 let matches = true;
 
