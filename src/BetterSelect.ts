@@ -4,6 +4,9 @@
  * Developer: Bogdan Barbu (barbu.bogdan.beniamin@gmail.com)
  */
 
+// Make sure events are output in the .d.ts declaration file.
+import './events';
+
 export interface BetterSelectAnchorOption {
   originalOption: HTMLOptionElement;
   value: string;

@@ -51,6 +51,19 @@ import { registerWebComponent } from '@smartimpact-it/better-select';
 registerWebComponent();
 ```
 
+or simple use the "autoRegister":
+
+```javascript
+import '@smartimpact-it/better-select/autoRegisterWebComponent';
+```
+
+You can also include the triple-slash directive for the typescript definitions, if you use typescript.
+
+```typescript
+/// <reference types="@smartimpact-it/better-select" />
+import '@smartimpact-it/better-select/autoRegisterWebComponent';
+```
+
 ### Attributes for the `better-select` web component
 
 The available options are:
@@ -95,6 +108,10 @@ new BetterSelect(element, {...});
 // or using jQuery
 import { registerForJquery } from '@smartimpact-it/better-select';
 registerForjQuery();
+$('select.my-select').betterSelect({...});
+
+// or use the autoRegister
+import '@smartimpact-it/better-select/autoRegisterForJquery';
 $('select.my-select').betterSelect({...});
 ```
 

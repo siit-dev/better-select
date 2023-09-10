@@ -11,7 +11,7 @@
     "src/**/*"
   ],
   "sideEffects": [
-    "dist/index.mjs",
+    "dist/events.mjs",
     "dist/autoRegisterForJquery.mjs",
     "dist/registerForJquery.mjs",
     "dist/autoRegisterWebComponent.mjs"
@@ -58,6 +58,10 @@
       "import": "./src/scss/bootstrap.scss"
     },
     "./scss/main.css": {
+      "style": "./dist/css/main.css",
+      "import": "./dist/css/main.css"
+    },
+    "./css/main.css": {
       "style": "./dist/css/main.css",
       "import": "./dist/css/main.css"
     }
