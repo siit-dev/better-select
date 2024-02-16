@@ -29,7 +29,7 @@ export interface BetterSelectSettings {
   alwaysTriggerChange?: boolean;
   zIndex?: number | null;
   fixedPlaceholder?: boolean;
-  scrollIntoView?: boolean;
+  scrollAfterSelection?: boolean;
 }
 
 export const defaultBetterSelectSettings = {
@@ -44,6 +44,7 @@ export const defaultBetterSelectSettings = {
   alwaysTriggerChange: false,
   fixedPlaceholder: false,
   zIndex: undefined,
+  scrollAfterSelection: true
 } satisfies BetterSelectSettings;
 
 export default class BetterSelect {
@@ -85,7 +86,7 @@ export default class BetterSelect {
   #searchString: string = '';
   #searchTimeoutInstance: number | null = null;
   #searchResetTimeout: number = 1500;
-  #scrollIntoView: boolean = true;
+  #scrollAfterSelection: boolean = true;
 
   #mutationObserver: MutationObserver | null = null;
 
@@ -132,7 +133,7 @@ export default class BetterSelect {
       alwaysTriggerChange,
       fixedPlaceholder,
       zIndex,
-      scrollIntoView = true,
+      scrollAfterSelection = true,
     } = {
       ...defaultBetterSelectSettings,
       ...settings,
@@ -148,7 +149,7 @@ export default class BetterSelect {
     this.#wrapperClass = wrapperClass;
     this.#triggerClass = triggerClass;
     this.#dropdownClass = dropdownClass;
-    this.#scrollIntoView = scrollIntoView;
+    this.#scrollAfterSelection = scrollAfterSelection;
 
     if (wrapperEl) {
       this.#wrapperEl = wrapperEl;
@@ -364,7 +365,7 @@ export default class BetterSelect {
       option.listElement.classList.toggle('is-temporary-selection', isActive && !isReallyActive);
       option.element.classList.toggle('active', isActive);
 
-      if (this.#scrollIntoView && this.#selectedOption === option) {
+      if (this.#scrollAfterSelection && this.#selectedOption === option) {
         option.listElement.scrollIntoView({ block: 'nearest' });
       }
     });
