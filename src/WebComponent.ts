@@ -180,7 +180,7 @@ export default class BetterSelectComponent extends HTMLElement {
       'trigger-class',
       'dropdown-class',
       'z-index',
-      'scroll-after-selection',
+      'scroll-selection-into-view',
     ];
   }
 
@@ -225,7 +225,7 @@ export default class BetterSelectComponent extends HTMLElement {
       case 'z-index':
         this.zIndex = newValue ? parseInt(newValue, 10) : null;
         break;
-      case 'scroll-after-selection':
+      case 'scroll-selection-into-view':
         this.scrollSelectionIntoView = newValue ? newValue === 'true' : true;
         break;
     }
