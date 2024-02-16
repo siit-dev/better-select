@@ -132,7 +132,7 @@ export default class BetterSelect {
       alwaysTriggerChange,
       fixedPlaceholder,
       zIndex,
-      scrollIntoView = true
+      scrollIntoView = true,
     } = {
       ...defaultBetterSelectSettings,
       ...settings,
