@@ -813,6 +813,7 @@ export default class BetterSelect {
       triggerClass: this.#triggerClass,
       dropdownClass: this.#dropdownClass,
       alwaysTriggerChange: this.#alwaysTriggerChange,
+      scrollAfterSelection: this.#scrollAfterSelection,
     };
   }
 

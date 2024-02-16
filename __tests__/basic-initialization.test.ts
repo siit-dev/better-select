@@ -211,11 +211,9 @@ it('uses the default settings if no settings are given', () => {
   const defaultSettings = defaultBetterSelectSettings;
   delete (defaultSettings as any).wrapperEl;
   delete defaultSettings.zIndex;
-  delete (defaultSettings as any).scrollAfterSelection;
   const instanceSettings = instance.settings;
   delete instanceSettings.wrapperEl;
   delete instanceSettings.zIndex;
-  delete instanceSettings.scrollAfterSelection;
 
   expect(instanceSettings).toEqual(defaultSettings);
 });
