@@ -162,7 +162,7 @@ export default class BetterSelectComponent extends HTMLElement {
       triggerClass: this.triggerClass,
       dropdownClass: this.dropdownClass,
       zIndex: this.zIndex,
-      scrollAfterSelection: this.scrollAfterSelection
+      scrollAfterSelection: this.scrollAfterSelection,
     };
   }
 
@@ -226,7 +226,7 @@ export default class BetterSelectComponent extends HTMLElement {
         this.zIndex = newValue ? parseInt(newValue, 10) : null;
         break;
       case 'scroll-after-selection':
-        this.scrollAfterSelection = newValue ? (newValue === 'true') : true;
+        this.scrollAfterSelection = newValue ? newValue === 'true' : true;
         break;
     }
 

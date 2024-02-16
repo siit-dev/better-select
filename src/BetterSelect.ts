@@ -44,7 +44,7 @@ export const defaultBetterSelectSettings = {
   alwaysTriggerChange: false,
   fixedPlaceholder: false,
   zIndex: undefined,
-  scrollAfterSelection: true
+  scrollAfterSelection: true,
 } satisfies BetterSelectSettings;
 
 export default class BetterSelect {
