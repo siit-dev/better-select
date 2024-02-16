@@ -65,7 +65,7 @@ export default class BetterSelectComponent extends HTMLElement {
   /**
    * Whether to scroll the select into view when updating the selection.
    */
-  scrollAfterSelection: boolean = true;
+  scrollSelectionIntoView: boolean = true;
 
   /**
    * The native select element.
@@ -162,7 +162,7 @@ export default class BetterSelectComponent extends HTMLElement {
       triggerClass: this.triggerClass,
       dropdownClass: this.dropdownClass,
       zIndex: this.zIndex,
-      scrollAfterSelection: this.scrollAfterSelection,
+      scrollSelectionIntoView: this.scrollSelectionIntoView,
     };
   }
 
@@ -226,7 +226,7 @@ export default class BetterSelectComponent extends HTMLElement {
         this.zIndex = newValue ? parseInt(newValue, 10) : null;
         break;
       case 'scroll-after-selection':
-        this.scrollAfterSelection = newValue ? newValue === 'true' : true;
+        this.scrollSelectionIntoView = newValue ? newValue === 'true' : true;
         break;
     }
 
