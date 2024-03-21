@@ -217,3 +217,27 @@ it('uses the default settings if no settings are given', () => {
 
   expect(instanceSettings).toEqual(defaultSettings);
 });
+
+it('disables the interface if the select is disabled', () => {
+  const BetterSelect = require('../src/index').default;
+
+  document.body.innerHTML = `
+    <select name="select" id="select1" disabled>
+      <option value="1">Option 1</option>
+      <option value="2">Option 2</option>
+    </select>
+  `;
+
+  const select = document.querySelector<HTMLSelectElement>('#select1')!;
+  const instance = new BetterSelect(select);
+  expect(instance.wrapperEl!.classList.contains('better-select--disabled')).toBeTruthy();
+  expect(instance.triggerEl!.getAttribute('aria-disabled')).toBe('true');
+  expect(instance.dropdownEl!.getAttribute('aria-disabled')).toBe('true');
+
+  // Enable the select and check that the interface is enabled
+  select.disabled = false;
+  select.dispatchEvent(new Event('betterSelect.updateUI'));
+  expect(instance.wrapperEl!.classList.contains('better-select--disabled')).toBeFalsy();
+  expect(instance.triggerEl!.getAttribute('aria-disabled')).toBeFalsy();
+  expect(instance.dropdownEl!.getAttribute('aria-disabled')).toBeFalsy();
+});

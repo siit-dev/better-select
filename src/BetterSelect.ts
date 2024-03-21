@@ -72,6 +72,7 @@ export default class BetterSelect {
   #title: string | null = null;
   #options: BetterSelectAnchorOption[] = [];
   #opened = false;
+  #disabled = false;
 
   mobileMediaQuery: MediaQueryList | null = null;
   #isMobileAndNative = false;
@@ -103,6 +104,7 @@ export default class BetterSelect {
 
     this.#element = element;
     this.#loadSettings(settings);
+    this.#disabled = this.#element.disabled;
 
     if (element.dataset.betterSelectInit) {
       return;
@@ -218,6 +220,7 @@ export default class BetterSelect {
     this.#wrapperEl = this.#wrapperEl || document.createElement('div');
     this.#wrapperEl.classList.add(this.#wrapperClass);
     this.#wrapperEl.classList.add('initializing');
+    this.#wrapperEl.classList.toggle('better-select--disabled', this.#disabled);
     this.#wrapperEl.style.zIndex = this.#zIndex.toString();
     if (this.#element.name) {
       const wrapperClass = this.#sanitizeClassName(`${this.#wrapperClass}-${this.#element.name}`);
@@ -328,6 +331,7 @@ export default class BetterSelect {
    * update UI elements values
    */
   updateUI() {
+    this.#disabled = this.element.disabled;
     this.#getValues();
     this.#element.style.visibility = this.#isMobileAndNative ? 'visible' : 'hidden';
     if (this.#triggerTitleEl) {
@@ -355,6 +359,27 @@ export default class BetterSelect {
     }
 
     this.updateDrowdownSelection();
+
+    // Update disabled/enabled settings
+    this.#wrapperEl?.classList.toggle('better-select--disabled', this.#disabled);
+    if (this.#triggerEl) {
+      if (this.#disabled) {
+        this.#triggerEl.removeAttribute('tabindex');
+        this.#triggerEl.setAttribute('aria-disabled', 'true');
+      } else {
+        this.#triggerEl.tabIndex = 0;
+        this.#triggerEl.removeAttribute('aria-disabled');
+      }
+    }
+    if (this.#dropdownEl) {
+      if (this.#disabled) {
+        this.#dropdownEl.setAttribute('aria-disabled', 'true');
+      } else {
+        this.#dropdownEl.removeAttribute('aria-disabled');
+      }
+    }
+
+    this.#triggerEvent(`betterSelect.updatedUI`);
   }
 
   updateDrowdownSelection() {
@@ -439,6 +464,10 @@ export default class BetterSelect {
    * toggle the dropdown status
    */
   toggle(newStatus: boolean | null = null) {
+    if (this.#disabled && newStatus !== false) {
+      return;
+    }
+
     // If the dropdown is open and we're on mobile, close it.
     if (this.#isMobileAndNative) {
       newStatus = false;
@@ -479,7 +508,7 @@ export default class BetterSelect {
    */
   #addListeners() {
     // listen to the changes to the original select
-    ['change', 'selectActive', 'input'].forEach(type =>
+    ['change', 'selectActive', 'input', 'betterSelect.updateUI'].forEach(type =>
       this.#element.addEventListener(type, this.updateUI.bind(this)),
     );
 
@@ -507,7 +536,11 @@ export default class BetterSelect {
     this.#mutationObserver = new MutationObserver(() => {
       this.refreshOptions();
     });
-    this.#mutationObserver.observe(this.#element, { childList: true });
+    this.#mutationObserver.observe(this.#element, {
+      childList: true,
+      attributes: true,
+      attributeFilter: ['disabled'],
+    });
 
     // Listen to the "reset" event on the form, if any.
     this.#form?.addEventListener('reset', this.#onFormReset.bind(this));
@@ -542,6 +575,10 @@ export default class BetterSelect {
 
   #onWrapperClick(e: MouseEvent) {
     if (!this.#dropdownEl?.contains(e.target as HTMLElement)) {
+      return;
+    }
+
+    if (this.#disabled) {
       return;
     }
 

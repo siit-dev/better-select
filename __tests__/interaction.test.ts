@@ -366,3 +366,22 @@ it('allows to prevent the dropdown from opening/closing on click', () => {
   betterSelectInstance.toggle(false);
   expect(betterSelectInstance.opened).toBeFalsy();
 });
+
+it('prevents opening the dropdown for a disabled select', () => {
+  document.body.innerHTML = `
+    <select name="select" id="select1" disabled>
+      <option value="">Placeholder</option>
+      <option value="2">Option 2</option>
+      <option value="3" disabled>Option 3</option>
+      <option value="4">Option 4</option>
+      <option value="5">Option 5</option>
+    </select>
+  `;
+
+  select = document.querySelector('#select1');
+  betterSelectInstance = new BetterSelect(select);
+  betterSelect = select!.closest('.better-select');
+
+  betterSelectInstance.toggle(true);
+  expect(betterSelectInstance.opened).toBeFalsy();
+});

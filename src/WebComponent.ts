@@ -144,7 +144,15 @@ export default class BetterSelectComponent extends HTMLElement {
 
     // Get the validity state from the native select
     const validity: ValidityState = this._select!.validity;
-    setValidity(validity, this._select?.validationMessage || '');
+
+    // If valid, just set the validity.
+    if (this._select.checkValidity()) {
+      setValidity(validity);
+      return;
+    }
+
+    // If invalid, add the message error.
+    setValidity(validity, this._select?.validationMessage || 'Invalid value');
   }
 
   get betterSelect() {
