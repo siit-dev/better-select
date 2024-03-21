@@ -362,6 +362,7 @@ export default class BetterSelect {
 
     // Update disabled/enabled settings
     this.#wrapperEl?.classList.toggle('better-select--disabled', this.#disabled);
+    this.#triggerEl?.classList.toggle('disabled', this.#disabled);
     if (this.#triggerEl) {
       if (this.#disabled) {
         this.#triggerEl.removeAttribute('tabindex');
