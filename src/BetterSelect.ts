@@ -317,7 +317,10 @@ export default class BetterSelect {
 
     // add the list to the dropdownEl
     dropdownEl.append(list);
-    dropdownEl.setAttribute('style', 'position: absolute; left: 0; top: 100%; right: 0;');
+    dropdownEl.style.position = "absolute";
+    dropdownEl.style.left = "0";
+    dropdownEl.style.top = "100%";
+    dropdownEl.style.right = "0";
     if (this.#dropdownEl) {
       this.#dropdownEl.replaceWith(dropdownEl);
     }
