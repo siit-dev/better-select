@@ -385,3 +385,18 @@ it('prevents opening the dropdown for a disabled select', () => {
   betterSelectInstance.toggle(true);
   expect(betterSelectInstance.opened).toBeFalsy();
 });
+
+it('ignores an open option immediately after its native select is disabled', () => {
+  getTrigger()!.click();
+  expect(betterSelectInstance!.opened).toBeTruthy();
+  const option = betterSelect!.querySelector('.better-select__dropdown-list [data-value="2"]')!;
+  const click = () => option.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+  select!.disabled = true;
+  click();
+  expect(select!.value).toBe('4');
+
+  select!.disabled = false;
+  click();
+  expect(select!.value).toBe('2');
+});

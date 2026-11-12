@@ -72,7 +72,9 @@ export default class BetterSelect {
   #title: string | null = null;
   #options: BetterSelectAnchorOption[] = [];
   #opened = false;
-  #disabled = false;
+  get #disabled() {
+    return this.#element.matches(':disabled');
+  }
 
   mobileMediaQuery: MediaQueryList | null = null;
   #isMobileAndNative = false;
@@ -104,7 +106,6 @@ export default class BetterSelect {
 
     this.#element = element;
     this.#loadSettings(settings);
-    this.#disabled = this.#element.disabled;
 
     if (element.dataset.betterSelectInit) {
       return;
@@ -331,7 +332,6 @@ export default class BetterSelect {
    * update UI elements values
    */
   updateUI() {
-    this.#disabled = this.element.disabled;
     this.#getValues();
     this.#element.style.visibility = this.#isMobileAndNative ? 'visible' : 'hidden';
     if (this.#triggerTitleEl) {
@@ -801,6 +801,9 @@ export default class BetterSelect {
   };
 
   #persistCurrentSelection = () => {
+    if (this.#disabled) {
+      return;
+    }
     const current = this.#selectedOption;
     if (current && this.#element.value !== current.value) {
       this.value = current.value;
